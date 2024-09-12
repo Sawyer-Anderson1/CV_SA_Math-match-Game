@@ -31,8 +31,5 @@ la	$a0, row2
 syscall
 la	$a0, row3
 syscall
-#li	$v0, 4
-#la	$s0, row3
-#syscall
 #boardUpdate:
 #bne $t0, 5, boardUpdate #will change the amount it iterates when we get to working on the other files in the furtue
