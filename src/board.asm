@@ -10,11 +10,10 @@
 #-----------------------
 .data
 columnHeader: 	.asciiz "_|0 1 2 3"
-rowHeader: 	.asciiz "0|"
-			"1|"
-			"2|"
-			"3|"
-string3: .asciiz "\nLoop #"
+rowHeader: 	.asciiz "0|+ + + +"
+			"1|+ + + +"
+			"2|+ + + +"
+			"3|+ + + +"
 
 #------------------
 # Main program body
