@@ -10,8 +10,7 @@
 #-----------------------
 .data
 columnHeader: 	.asciiz "_|0 1 2 3"
-rowHeader: 	.asciiz " |"
-			"0|"
+rowHeader: 	.asciiz "0|"
 			"1|"
 			"2|"
 			"3|"
