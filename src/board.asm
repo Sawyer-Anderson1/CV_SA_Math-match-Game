@@ -41,7 +41,6 @@ main:
 	
 cardCheck:
 	
-	
 	#$t0 for the boolean
 	
 	#if card1 == card2:
@@ -57,9 +56,9 @@ cardCheck:
 	j	_boardUpdate
 
 _boardUpdate:
-	
-	beq	$s0, $s1, exit 
+	beq	$s0, $s1, exit 	# if count == amount, go to exit
 
+	# Prints the board
 	li	$v0, 4
 	la	$a0, columnHeader
 	syscall
@@ -72,35 +71,25 @@ _boardUpdate:
 	la	$a0, row3
 	syscall
 	
+	# Prompts the player for row input
 	la	$a0, prompt
 	syscall
-	
+	# Reads and stores row input to i_index
 	li	$v0, 1
 	syscall
 	move	$t0, $v0
-	lw	$t0, i_index
-	
+	sw	$t0, i_index
+	# Reads and stores column input to j_index
 	li	$v0, 1
 	syscall
 	move	$t0, $v0
-	lw	$t0, j_index
+	sw	$t0, j_index
 	
-	la	$a0, prompt
-	syscall
-	
-	li	$v0, 1
-	syscall
-	move	$t0, $v0
-	lw	$t0, i_index
-	
-	li	$v0, 1
-	syscall
-	move	$t0, $v0
-	lw	$t0, j_index
-	
-	j	cardCheck
-	
-exit: 
-	li	$v0, 10
-	syscall
+	j	cardCheck	
 
+#------
+# Halt
+#------
+Exit:
+	li $v0, 10
+	syscall		# calls the system to exit
