@@ -71,7 +71,7 @@ _boardUpdate:
 	la	$a0, row3
 	syscall
 	
-	# Prompts the player for row input
+	# Prompts the player for row and column input
 	la	$a0, prompt
 	syscall
 	# Reads and stores row input to i_index
