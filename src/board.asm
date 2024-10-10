@@ -10,6 +10,7 @@
 #-----------------------
 		.data
 prompt:		.asciiz "Enter a row index 0-3 and a column index 0-3: "
+matchIndicator: .asciiz "Match!\n"
 columnHeader: 	.asciiz "_|0 1 2 3\n"
 row0: 		.asciiz "0|+ + + +\n"
 row1:		.asciiz "1|+ + + +\n"
@@ -37,112 +38,45 @@ cardsRow3:	.word 8, 8, 7, 6
 .text
 main:
 	lw	$s0, amount
-	lw 	$s2, cards
-	lw	$s3, displayCards
 	
 	addi	$a0, $zero, 0 # this is the arguement that indicates that no correct flips
 	jal	_boardUpdate
 	
-cardCheck:
-	
-	
-	#$s4 for the boolean
-	
-	#if card1 == card2:
-	#	boolean = 1
-	#else:
-	#	boolean = 0
+cardCheck:	
+	# t0: the firstCard (the row index)
+	# t1: the column index for the first card
+	# t2: the secondCard (the row index)
+	# t3: the column index for the second card
+	# v0: the value of card 1
+	# v1: the value of card 2
 	
 	lw	$t0, firstCard
+	lw	$t1, firstCard+4 #the column index for the first card
+	add	$a0, $zero, $t0 # the arugment for the subroutine call
+	add	$a1, $zero, $t1 # the second 
+	addi	$a2, $zero, 0 # the argument that indicates that the operation is loading for first card
+	
+	jal	locationCheck # jumping to the subroutine
+	
 	lw	$t2, secondCard
-	lw	$t6, 4($t0) #the column index for the first card
-	lw	$t7, 4($t2) #the column index for the second card
+	lw	$t3, secondCard+4 #the column index for the second card
+	add	$a0, $zero, $t2
+	add	$a1, $zero, $t3
+	addi	$a2, $zero, 1 # the value that indicates the second card
 	
-	# $t3 and $t4 for the values of the cards
-	# finding the row for card one, and then its values
-	beq	$t0, 0, Row0
-	beq	$t0, 1, Row1
-	beq	$t0, 2, Row2
-	beq    	$t0, 3, Row3
+	jal	locationCheck # jumping to the subroutine
 	
-	Row0: 
-		lw	$t5, cardsRow0
-		
-		sll	$t6, $t6, 2
-		add	$t5, $t5, $t6
-		lw	$t3, 0($t5)
-		
-		j	Card2
-	Row1: 
-		lw	$t5, cardsRow1
-		
-		sll	$t6, $t6, 2
-		add	$t5, $t5, $t6
-		lw	$t3, 0($t5)
-		
-		j	Card2
-	Row2: 
-		lw	$t5, cardsRow2
-		
-		sll	$t6, $t6, 2
-		add	$t5, $t5, $t6
-		lw	$t3, 0($t5)
-		
-		j	Card2
-	Row3:
-		lw	$t5, cardsRow0
-		
-		sll	$t6, $t6, 2
-		add	$t5, $t5, $t6
-		lw	$t3, 0($t5)
+	move	$s0, $v0
+	move	$s1, $v1
 	
-	Card2:
-	#card 2
-	beq	$t2, 0, Row0
-	beq	$t2, 1, Row1
-	beq	$t2, 2, Row2
-	beq    	$t2, 3, Row3
-	
-	Row0: 
-		lw	$t5, cardsRow0
-		
-		sll	$t7, $t7, 2
-		add	$t5, $t5, $t7
-		lw	$t4, 0($t5)
-		
-		j	Resume
-	Row1: 
-		lw	$t5, cardsRow1
-		
-		sll	$t7, $t7, 2
-		add	$t5, $t5, $t7
-		lw	$t4, 0($t5)
-		
-		j	Resume
-	Row2: 
-		lw	$t5, cardsRow2
-		
-		sll	$t7, $t7, 2
-		add	$t5, $t5, $t7
-		lw	$t4, 0($t5)
-		
-		j	Resume
-	Row3:
-		lw	$t5, cardsRow0
-		
-		sll	$t7, $t7, 2
-		add	$t5, $t5, $t7
-		lw	$t4, 0($t5)
-	
-	Resume:
 	#goes to the if statement
-	beq	$t4, $t3, If
+	beq	$s0, $s1, If
 	j	Else
 	
 	If: 
 		addi	$a0, $a0, 1 # 1 for matching
-		# incrementing the count
-		addi	$s0, $s0, 1
+		# decrementing the count
+		addi	$s0, $s0, -1
 		
 		jal _boardUpdate
 	Else:
@@ -161,96 +95,39 @@ _boardUpdate:
 	
 	j	MatchPrint
 	
-	TempPrint: 
+	TempPrint: # showing the cards choosen, if they don't match
 		
 		j	Prompt
 	
 	MatchPrint: # permanantly change the board
+		# t0: the firstCard (the row index)
+		# t1: the column index for the first card
+		# t2: the secondCard (the row index)
+		# t3: the column index for the second card
+		
+		li	$v0, 4
+		la	$a0, matchIndicator
+		syscall
+		
+		# lw	$t0, firstCard
+		# lw	$t1, 4($t0) # the column index for the first card
+		# add	$a0, $zero, $t0
+		# add	$a1, $zero, $t1
+		# addi	$a2, $zero, 2 # the value that indicates that we are changing the board
+		
+		# jal	locationCheck
+		
+		# lw	$t2, secondCard
+		# lw	$t3, 4($t2) # the column index for the second card
+		# add	$a0, $zero, $t2
+		# add	$a1, $zero, $t3
+		# addi	$a2, $zero, 2 # the value that indicates that we are changing the board
+		
+		# jal	locationCheck
 	
-		lw	$t0, firstCard
-		lw	$t2, secondCard
-		lw	$t6, 4($t0) #the column index for the first card
-		lw	$t7, 4($t2) #the column index for the second card
-	
-		# $t3 and $t4 for the values of the cards
-		# finding the row for card one, and then its values
-		beq	$t0, 0, Row0
-		beq	$t0, 1, Row1
-		beq	$t0, 2, Row2
-		beq    	$t0, 3, Row3
-	
-		Row0: 
-			lw	$t5, displayCardsR0
-		
-			sll	$t6, $t6, 2
-			add	$t5, $t5, $t6
-			lw	$t3, 0($t5)
-		
-			j	Card2
-		Row1: 
-			lw	$t5, displayCardsR1
-		
-			sll	$t6, $t6, 2
-			add	$t5, $t5, $t6
-			lw	$t3, 0($t5)
-		
-			j	Card2
-		Row2: 
-			lw	$t5, displayCardsR2
-		
-			sll	$t6, $t6, 2
-			add	$t5, $t5, $t6
-			lw	$t3, 0($t5)
-		
-			j	Card2
-		Row3:
-			lw	$t5, displayCardsR3
-		
-			sll	$t6, $t6, 2
-			add	$t5, $t5, $t6
-			lw	$t3, 0($t5)
-	
-		Card2:
-		#card 2
-		beq	$t2, 0, Row0
-		beq	$t2, 1, Row1
-		beq	$t2, 2, Row2
-		beq    	$t2, 3, Row3
-	
-		Row0: 
-			lw	$t5, displayCardsR0
-		
-			sll	$t7, $t7, 2
-			add	$t5, $t5, $t7
-			lw	$t4, 0($t5)
-		
-			j	Resume
-		Row1: 
-			lw	$t5, displayCardsR1
-		
-			sll	$t7, $t7, 2
-			add	$t5, $t5, $t7
-			lw	$t4, 0($t5)
-		
-			j	Resume
-		Row2: 
-			lw	$t5, displayCardsR2
-		
-			sll	$t7, $t7, 2
-			add	$t5, $t5, $t7
-			lw	$t4, 0($t5)
-		
-			j	Resume
-		Row3:
-			lw	$t5, displayCardsR3
-		
-			sll	$t7, $t7, 2
-			add	$t5, $t5, $t7
-			lw	$t4, 0($t5)
-
+	Prompt: # reprompting for the input
 		li	$v0, 4
 		la	$a0, columnHeader
-		
 		syscall
 		la	$a0, row0
 		syscall
@@ -260,38 +137,116 @@ _boardUpdate:
 		syscall
 		la	$a0, row3
 		syscall
-	
-	Prompt:
-	
+		
+		li	$v0, 4
 		la	$a0, prompt
 		syscall
 	
-		li	$v0, 1
+		li	$v0, 5
 		syscall
 		move	$t0, $v0
-		lw	$t0, 0(firstCard)
+		sw	$t0, firstCard
 	
-		li	$v0, 1
+		li	$v0, 5
 		syscall
 		move	$t0, $v0
-		lw	$t0, 4(firstCard)
+		sw	$t0, firstCard+4
 	
+		li	$v0, 4
 		la	$a0, prompt
 		syscall
 	
-		li	$v0, 1
+		li	$v0, 5
 		syscall
 		move	$t0, $v0
-		lw	$t0, 0(secondCard)
-	
-		li	$v0, 1
+		sw	$t0, secondCard
+		
+		li	$v0, 5
 		syscall
 		move	$t0, $v0
-		lw	$t0, 4(secondCard)
+		sw	$t0, secondCard+4
 	
 	j	cardCheck
 	
+locationCheck: # checks and goes to location in the array
+	# a0: the row index
+	# a1: the column index
+	# a2: 0, 1, or 2 for the loading and storing (changing the board)
+		# 0 is for getting value of card 1
+		# 1 is for getting value of card 2
+		# 2 is for changing board
+	# t0: the row
+	# t1: the index position for a row
+	# t2: the value for loading which will be transfered to 
+	# v0: returns value for card 1
+	# v1: returns value for card 2
+	
+	beq	$a0, 0, Row0
+	beq	$a0, 1, Row1
+	beq	$a0, 2, Row2
+	beq    	$a0, 3, Row3
+	
+	Row0: 
+		la	$t0, cardsRow0
+		
+		sll	$t1, $a1, 2
+		add	$t0, $t0, $t1
+		
+		beq	$a2, 0, Return_1
+		beq	$a2, 1, Return_2
+		
+		j	alteringBoard
+		
+	Row1: 
+		la	$t0, cardsRow1
+		
+		sll	$t1, $a1, 2
+		add	$t0, $t0, $t1
+		
+		beq	$a2, 0, Return_1
+		beq	$a2, 1, Return_2
+		
+		j	alteringBoard
+		
+	Row2: 
+		la	$t0, cardsRow2
+		
+		sll	$t1, $a1, 2
+		add	$t0, $t0, $t1
+		
+		beq	$a2, 0, Return_1
+		beq	$a2, 1, Return_2
+		
+		j	alteringBoard
+		
+	Row3:
+		la	$t0, cardsRow0
+		
+		sll	$t1, $a1, 2
+		add	$t0, $t0, $t1
+		
+		beq	$a2, 0, Return_1
+		beq	$a2, 1, Return_2
+		
+		j	alteringBoard
+		
+	Return_1:
+		lw	$t2, 0($t0)
+		add	$v0, $zero, $t2
+		
+		j	end
+	
+	Return_2:
+		lw	$t2, 0($t0)
+		add	$v1, $zero, $t2
+		
+		j	end
+		
+	alteringBoard:
+		j	end
+		
+	end:
+		jr	$ra
 exit: 
 	li	$v0, 10
 	syscall
-
