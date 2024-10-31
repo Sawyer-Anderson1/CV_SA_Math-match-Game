@@ -20,6 +20,7 @@ row3:		.asciiz "3|+ + + +\n"
 firstCard:	.word 0, 0
 secondCard: 	.word 0, 0
 amount:		.word 8
+timer:		.word 0
 
 displayCardsR0:	.asciiz "3", "1x1", "1x2", "2x2"
 displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
@@ -36,6 +37,7 @@ cardsRow3:	.word 8, 8, 7, 6
 #------------------
 
 .text
+.globl	main
 main:
 	lw	$s0, amount
 	
@@ -96,10 +98,10 @@ _boardUpdate:
 	j	MatchPrint
 	
 	TempPrint: # showing the cards choosen, if they don't match
-		
+		# probably will make this another file?
 		j	Prompt
 	
-	MatchPrint: # permanantly change the board
+	MatchPrint: # permanantly change the board, maybe this will be be another file, with TempPrint
 		# t0: the firstCard (the row index)
 		# t1: the column index for the first card
 		# t2: the secondCard (the row index)
@@ -124,6 +126,10 @@ _boardUpdate:
 		# addi	$a2, $zero, 2 # the value that indicates that we are changing the board
 		
 		# jal	locationCheck
+		
+		# jal	TimerPause
+		# move	$s2, $v0
+		# sw	$s2, timer
 	
 	Prompt: # reprompting for the input
 		li	$v0, 4
@@ -165,7 +171,12 @@ _boardUpdate:
 		syscall
 		move	$t0, $v0
 		sw	$t0, secondCard+4
-	
+		
+		
+		# lw	$s2, timer
+		# move	$a0, $s2
+		# jal	Timer
+		
 	j	cardCheck
 	
 locationCheck: # checks and goes to location in the array
