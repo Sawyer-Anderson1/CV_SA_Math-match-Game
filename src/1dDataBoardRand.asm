@@ -7,10 +7,11 @@
 
 #-----------------------
 # Declare some constants
-#-----------------------
-		.data
-promptC1:	.asciiz "Card 1, Enter a input from 1 - 16: "
-promptC2:	.asciiz "Card 2, Enter a input from 1 - 16: "
+#-----------------------   
+     .data
+# IDEA OF 2D IMPLEMENTATION
+promptC1:	.asciiz "Card 1, Enter an input from 1 - 16: "
+promptC2:	.asciiz "Card 2, Enter an input from 1 - 16: "
 promptMatch: 	.asciiz "Cards Match!!\n"
 
 BoardHeader: 	.asciiz " ___________________ \n"
@@ -22,106 +23,119 @@ row5: 		.asciiz "| 9  | 10 | 11 | 12 |\n"
 row6: 		.asciiz "|____|____|____|____|\n"
 row7: 		.asciiz "| 13 | 14 | 15 | 16 |\n"
 row8: 		.asciiz "|____|____|____|____|\n"
+# IDEA OF 2D IMPLEMENTATION
 
-# 1-D Arrays to test board with 1-D data, 2-D display of the board
-cardOrder:	.word 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16				# Order of the cards as shown on the board
+card1:      .asciiz "4"
+card2:      .asciiz "2x2"
+card3:      .asciiz "6"
+card4:      .asciiz "2x3"
+card5:      .asciiz "8"
+card6:      .asciiz "2x4"
+card7:      .asciiz "9"
+card8:      .asciiz "3x3"
+card9:      .asciiz "10"
+card10:     .asciiz "2x5"
+card11:     .asciiz "12"
+card12:     .asciiz "3x4"
+card13:     .asciiz "15"
+card14:     .asciiz "3x5"
+card15:     .asciiz "16"
+card16:     .asciiz "3x4"
 
-cardDisArr:	.asciiz 	"1", "1x1", "2", "1x2", "3", "1x3", "4", "2x2", "5", "1x5", "6", "1x6", "7", "1x7", "8", "1x8"	# Values to Display
-cardValArr:	.word 		1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8
-size:		.word		16	# 16 elements in both Value and Display arrays
+cardDisArr: .word card1, card2, card3, card4, card5, card6, card7, card8
+            .word card9, card10, card11, card12, card13, card14, card15, card16
 
-RandDisCards: 	.word		
-RandCardVals:	.word
+cardValArr: .word 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16  # Array of integer values
 
-newline:	.asciiz "\n"	# newline for formatting
-WrInput:	.asciiz "Incorrect input, please try again"		# Display for same card inputted or out of range
+arraySize:  .word 16                         # Number of elements in the array
 
 #------------------
 # Main program body
 #------------------
-
 .text
-main:	
-	# Display to demonstrate 1D data 2D Display Board
-	li $v0 4
-	la $a0 BoardHeader
-	syscall
-	la $a0 row1
-	syscall
-	la $a0 row2
-	syscall
-	la $a0 row3
-	syscall
-	la $a0 row4
-	syscall
-	la $a0 row5
-	syscall
-	la $a0 row6
-	syscall
-	la $a0 row7
-	syscall
-	la $a0 row8
-	syscall
-	
-	# Load the address of the array and the size of the array
-   	la      $t0, cardValArr	  # load address of array into $t0
-    	lw      $t1, size         # load size of the array into $t1
-	addi    $t1, $t1, -1      # set $t1 to size-1 (last index)
+
+main:
+    # Load array size
+    la   $t0, arraySize         # Load the address of array size
+    lw   $t1, 0($t0)            # Load array size into $t1 (array length)
+    addi $t4, $t1, -1           # Set $t4 to size-1 (last index for shuffling)
+
+    # Set up base addresses
+    la $t2, cardDisArr          # Base address of cardDisArr
+    la $t3, cardValArr          # Base address of cardValArr
 
 shuffle_loop:
-    	# Check if we've processed all elements (i >= 0)
-    	bltz    $t1, display_loop    # exit if $t1 < 0 (i < 0)
+    # Check if the loop counter ($t4) is below 1
+    bltz $t4, print_arrays      # If $t4 < 0, go to print arrays
 
-    	# Generate a random index between 0 and $t1 (inclusive)
-    	addi    $a1, $t1, 1       # set upper bound (t1 + 1) for syscall 42
-    	li      $v0, 42           # system call to generate a random number
-    	syscall
-    	rem     $t2, $v0, $t1     # $t2 = random index (j) in range [0, i]
+    # Generate a random index within bounds (0 to $t4)
+    addi $a0, $t4, 1            # Set upper bound for random index
+    li   $v0, 42                # Syscall for generating random integer
+    syscall
+    move $t5, $v0               # Store random index in $t5
 
-    	# Swap array[i] with array[j]
-    	mul     $t3, $t1, 4       # $t3 = i * 4 (offset for array[i])
-    	mul     $t4, $t2, 4       # $t4 = j * 4 (offset for array[j])
-    	
-    	add     $t5, $t0, $t3     # $t5 = address of array[i]
-    	add     $t6, $t0, $t4     # $t6 = address of array[j]
+    # Calculate memory positions for the elements to be swapped
+    mul $t6, $t4, 4             # $t6 = Offset for cardDisArr[$t4]
+    mul $t7, $t5, 4             # $t7 = Offset for cardDisArr[$t5]
+    
+    add $s0, $t2, $t6           # Memory position for cardDisArr[$t4]
+    add $s1, $t2, $t7           # Memory position for cardDisArr[$t5]
+    
+    # Swap elements in cardDisArr at positions $t4 and $t5
+    lw $t8, 0($s0)              # Load cardDisArr[$t4]
+    lw $t9, 0($s1)              # Load cardDisArr[$t5]
+    sw $t9, 0($s0)              # Store cardDisArr[$t5] in cardDisArr[$t4]
+    sw $t8, 0($s1)              # Store cardDisArr[$t4] in cardDisArr[$t5]
+    
+    # Calculate memory positions in cardValArr for $t4 and $t5
+    add $s0, $t3, $t6           # Memory position for cardValArr[$t4]
+    add $s1, $t3, $t7           # Memory position for cardValArr[$t5]
 
-    	lw      $t7, 0($t5)       # $t7 = array[i]
-    	lw      $t8, 0($t6)       # $t8 = array[j]
-    	
-    	sw      $t8, 0($t5)       # array[i] = array[j]
-    	sw      $t7, 0($t6)       # array[j] = array[i]
+    # Swap integers in cardValArr at positions $t4 and $t5
+    lw $t8, 0($s0)              # Load cardValArr[$t4]
+    lw $t9, 0($s1)              # Load cardValArr[$t5]	
+    sw $t9, 0($s0)              # Store cardValArr[$t5] in cardValArr[$t4]
+    sw $t8, 0($s1)              # Store cardValArr[$t4] in cardValArr[$t5]
 
-	# Decrement $t1 (move to the next element)
-    	addi    $t1, $t1, -1
-	j       shuffle_loop      # repeat the loop
+    # Decrement loop counter and continue
+    sub $t4, $t4, 1
+    j shuffle_loop
 
-display_loop:
-    lw      $t1, size         # reload size of the array into $t1
-    li      $t2, 0            # set $t2 = 0 (index)
+print_arrays:
+    # Reset array size and load for print loop
+    la $t0, arraySize           # Reload array size address
+    lw $t1, 0($t0)              # Reload array size into $t1
+    li $t4, 0                   # Initialize index counter to 0
 
 print_loop:
-    bge     $t2, $t1, exit  # exit if index >= size
+    # Check if we are done printing
+    beq $t4, $t1, Exit          # If index == array size, go to exit
 
-    # Calculate the address of array[$t2]
-    mul     $t3, $t2, 4       # $t3 = $t2 * 4 (index * 4)
-    add     $t4, $t0, $t3     # $t4 = address of array[$t2]
-
-    # Load the value of array[$t2] and print it
-    lw      $a0, 0($t4)       # load array[$t2] into $a0
-    li      $v0, 1            # syscall for print_int
+    # Calculate memory positions for printing card description and value
+    mul $t5, $t4, 4             # Calculate offset for cardDisArr[$t4]	
+    add $s0, $t2, $t5           # Memory position for cardDisArr[$t4]
+    add $s1, $t3, $t5           # Memory position for cardValArr[$t4]
+    
+    # Print card description (string) at cardDisArr[$t4]
+    lw $a0, 0($s0)              # Load the pointer to the string
+    li $v0, 4                   # Syscall for printing a string
     syscall
 
-    # Print a newline after each element for readability
-    la      $a0, newline      # load newline into $a0
-    li      $v0, 4            # syscall for print_string
+    # Print corresponding value in cardValArr[$t4]
+    lw $a0, 0($s1)              # Load integer value at cardValArr[$t4]
+    li $v0, 1                   # Syscall for printing an integer
     syscall
 
-    # Increment the index
-    addi    $t2, $t2, 1
-    j       print_loop        # repeat the loop
+    # Print newline
+    li $a0, 10                  # ASCII code for newline
+    li $v0, 11                  # Syscall for printing a character
+    syscall
+    
+    # Increment index and repeat
+    addi $t4, $t4, 1
+    j print_loop
 
-
-exit:
-    # Exit the program
-    li      $v0, 10           # exit syscall
+Exit:
+    # Exit program
+    li $v0, 10                  # Syscall for exit
     syscall
