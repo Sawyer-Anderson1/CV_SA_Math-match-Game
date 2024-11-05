@@ -107,38 +107,35 @@ shuffle_loop:
     j shuffle_loop
 
 print_arrays:
-    # Reset array size and load for print loop
-    la $t0, arraySize           # Reload array size address
-    lw $t1, 0($t0)              # Reload array size into $t1
     li $t4, 0                   # Initialize index counter to 0
 
-print_loop:
-    # Check if we are done printing
-    beq $t4, 15, Exit          # If index == array size, go to exit
+     print_loop:
+         # Check if we are done printing
+         beq $t4, 15, Exit          # If index == array size, go to exit
 
-    # Calculate memory positions for printing card description and value
-    mul $t5, $t4, 4             # Calculate offset for cardDisArr[$t4]	
-    add $s0, $t2, $t5           # Memory position for cardDisArr[$t4]
-    add $s1, $t3, $t5           # Memory position for cardValArr[$t4]
+         # Calculate memory positions for printing card description and value
+         mul $t5, $t4, 4             # Calculate offset for cardDisArr[$t4]	
+         add $s0, $t2, $t5           # Memory position for cardDisArr[$t4]
+         add $s1, $t3, $t5           # Memory position for cardValArr[$t4]
     
-    # Print card description (string) at cardDisArr[$t4]
-    lw $a0, 0($s0)              # Load the pointer to the string
-    li $v0, 4                   # Syscall for printing a string
-    syscall
+         # Print card description (string) at cardDisArr[$t4]
+         lw $a0, 0($s0)              # Load the pointer to the string
+         li $v0, 4                   # Syscall for printing a string
+         syscall
 
-    # Print corresponding value in cardValArr[$t4]
-    lw $a0, 0($s1)              # Load integer value at cardValArr[$t4]
-    li $v0, 1                   # Syscall for printing an integer
-    syscall
+         # Print corresponding value in cardValArr[$t4]
+         lw $a0, 0($s1)              # Load integer value at cardValArr[$t4]
+         li $v0, 1                   # Syscall for printing an integer
+         syscall
 
-    # Print newline
-    li $a0, 10                  # ASCII code for newline
-    li $v0, 11                  # Syscall for printing a character
-    syscall
+         # Print newline
+         li $a0, 10                  # ASCII code for newline
+         li $v0, 11                  # Syscall for printing a character
+         syscall
     
-    # Increment index and repeat
-    addi $t4, $t4, 1
-    j print_loop
+         # Increment index and repeat
+         addi $t4, $t4, 1
+         j print_loop
 
 Exit:
     # Exit program
