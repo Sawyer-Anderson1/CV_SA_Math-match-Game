@@ -42,8 +42,7 @@ card14:     .asciiz "3x5"
 card15:     .asciiz "16"
 card16:     .asciiz "3x4"
 
-cardDisArr: .word 0, card1, card2, card3, card4, card5, card6, card7, card8
-            .word card9, card10, card11, card12, card13, card14, card15, card16
+cardDisArr: .word 0, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, card16
 newDisArr:  .word 
 
 cardValArr: .word 0, 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16  # Array of integer values
