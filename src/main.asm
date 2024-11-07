@@ -1,8 +1,9 @@
 #-----------------------------------------------------------
-# Program File: board.asm
+# Program File: main.asm
 # Written by: Sawyer Anderson and Carlos Vazquez
-# Date Created: 9/12/2024
-# Description: The file that controls the board
+# Date Created: 11/7/2024
+# Description: The file that gets input (Prompt) and calls
+#        the locationCheck and boardUpdate
 #-----------------------------------------------------------
 
 #-----------------------
@@ -43,50 +44,50 @@ main:
 	lw	$s0, amount
 	
 Prompt: # reprompting for the input
-		li	$v0, 4
-		la	$a0, columnHeader
-		syscall
-		la	$a0, row0
-		syscall
-		la	$a0, row1
-		syscall
-		la	$a0, row2
-		syscall
-		la	$a0, row3
-		syscall
-		
-		li	$v0, 4
-		la	$a0, prompt
-		syscall
+	li	$v0, 4
+	la	$a0, columnHeader
+	syscall
+	la	$a0, row0
+	syscall
+	la	$a0, row1
+	syscall
+	la	$a0, row2
+	syscall
+	la	$a0, row3
+	syscall
 	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, firstCard
+	li	$v0, 4
+	la	$a0, prompt
+	syscall
 	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, firstCard+4
+	li	$v0, 5
+	syscall
+	move	$t0, $v0
+	sw	$t0, firstCard
 	
-		li	$v0, 4
-		la	$a0, prompt
-		syscall
+	li	$v0, 5
+	syscall
+	move	$t0, $v0
+	sw	$t0, firstCard+4
 	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, secondCard
+	li	$v0, 4
+	la	$a0, prompt
+	syscall
+	
+	li	$v0, 5
+	syscall
+	move	$t0, $v0
+	sw	$t0, secondCard
 		
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, secondCard+4
+	li	$v0, 5
+	syscall
+	move	$t0, $v0
+	sw	$t0, secondCard+4
 		
 		
-		# lw	$s2, timer
-		# move	$a0, $s2
-		# jal	Timer
+	# lw	$s2, timer
+	# move	$a0, $s2
+	# jal	Timer
 		
 cardCheck:	
 	# t0: the firstCard (the row index)
