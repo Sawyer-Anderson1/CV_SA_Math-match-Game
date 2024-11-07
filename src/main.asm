@@ -12,12 +12,6 @@
 		.data
 
 prompt:		.asciiz "Enter a row index 0-3 and a column index 0-3: "
-matchIndicator: .asciiz "Match!\n"
-columnHeader: 	.asciiz "_|0 1 2 3\n"
-row0: 		.asciiz "0|+ + + +\n"
-row1:		.asciiz "1|+ + + +\n"
-row2:		.asciiz "2|+ + + +\n"
-row3:		.asciiz "3|+ + + +\n"
 
 firstCard:	.word 0, 0
 secondCard: 	.word 0, 0
@@ -34,22 +28,12 @@ displayCardsR3:.asciiz "4x2", "8", "7", "3x2"
 #------------------
 
 .text
-.globl	main, cardCheck
+.globl	main, cardCheck, Prompt
 main:
 	lw	$s0, amount
 	
 Prompt: # reprompting for the input
-	li	$v0, 4
-	la	$a0, columnHeader
-	syscall
-	la	$a0, row0
-	syscall
-	la	$a0, row1
-	syscall
-	la	$a0, row2
-	syscall
-	la	$a0, row3
-	syscall
+	jal	currBoard
 	
 	li	$v0, 4
 	la	$a0, prompt
@@ -114,7 +98,7 @@ cardCheck:
 	bne	$s2, $s1, Else
 	
 	If: 
-		li	$t0, 1 # 1 for matching
+		li	$a0, 1 # 1 for matching
 		# decrementing the count
 		addi	$s0, $s0, -1
 		
@@ -122,7 +106,7 @@ cardCheck:
 		
 		j 	boardUpdate
 	Else:
-		li	$t0, 0 # 0 for not matching
+		li	$a0, 0 # 0 for not matching
 		
 		j	boardUpdate
 	#beq	$t0, $zero, _boardUpdate
