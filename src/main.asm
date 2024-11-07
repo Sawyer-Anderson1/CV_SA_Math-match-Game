@@ -29,11 +29,6 @@ displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
 displayCardsR2:.asciiz "4", "6", "5", "1x7"
 displayCardsR3:.asciiz "4x2", "8", "7", "3x2" 
 
-cardsRow0:	.word 3, 1, 2, 4
-cardsRow1: 	.word 1, 2, 3, 5
-cardsRow2:	.word 4, 6, 5, 7
-cardsRow3:	.word 8, 8, 7, 6
-
 #------------------
 # Main program body
 #------------------
@@ -122,6 +117,8 @@ cardCheck:
 		li	$t0, 1 # 1 for matching
 		# decrementing the count
 		addi	$s0, $s0, -1
+		
+		beq	$s0, -1, Exit # when all the cards have been matched a flipped
 		
 		j 	boardUpdate
 	Else:
