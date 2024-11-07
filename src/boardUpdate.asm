@@ -38,14 +38,8 @@ cardsRow3:	.word 8, 8, 7, 6
 #------------------
 
 .text
-.globl	main, cardCheck, If, Else
-main:
-	lw	$s0, amount
-	
-	#addi	$a0, $zero, 0 # this is the arguement that indicates that no correct flips
-	#j	_boardUpdate
-
-_boardUpdate:
+.globl boardUpdate
+boardUpdate:
 	beq	$s0, 0, exit # when all the cards have been matched a flipped
 
 	beq	$t0, 1, MatchPrint
@@ -84,94 +78,5 @@ _boardUpdate:
 		# jal	TimerPause
 		# move	$s2, $v0
 		# sw	$s2, timer
-	
-	Prompt: # reprompting for the input
-		li	$v0, 4
-		la	$a0, columnHeader
-		syscall
-		la	$a0, row0
-		syscall
-		la	$a0, row1
-		syscall
-		la	$a0, row2
-		syscall
-		la	$a0, row3
-		syscall
-		
-		li	$v0, 4
-		la	$a0, prompt
-		syscall
-	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, firstCard
-	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, firstCard+4
-	
-		li	$v0, 4
-		la	$a0, prompt
-		syscall
-	
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, secondCard
-		
-		li	$v0, 5
-		syscall
-		move	$t0, $v0
-		sw	$t0, secondCard+4
-		
-		
-		# lw	$s2, timer
-		# move	$a0, $s2
-		# jal	Timer
-		
-cardCheck:	
-	# t0: the firstCard (the row index)
-	# t1: the column index for the first card
-	# t2: the secondCard (the row index)
-	# t3: the column index for the second card
-	# v0: the value of card 1
-	# v1: the value of card 2
-	
-	lw	$t0, firstCard
-	lw	$t1, firstCard+4 #the column index for the first card
-	add	$a0, $zero, $t0 # the arugment for the subroutine call
-	add	$a1, $zero, $t1 # the second 
-	li	$a2, 0 # the argument that indicates that the operation is loading for first card
-	
-	jal	locationCheck # jumping to the subroutine
-	move	$s2, $v0
-	
-	lw	$t2, secondCard
-	lw	$t3, secondCard+4 #the column index for the second card
-	add	$a0, $zero, $t2
-	add	$a1, $zero, $t3
-	li	$a2, 0 # the value that indicates the second card
-	
-	jal	locationCheck # jumping to the subroutine
-	move	$s1, $v0
-	
-	#goes to the if statement
-	bne	$s2, $s1, Else
-	
-	If: 
-		li	$t0, 1 # 1 for matching
-		# decrementing the count
-		addi	$s0, $s0, -1
-		
-		j 	_boardUpdate
-	Else:
-		li	$t0, 0 # 0 for not matching
-		
-		j	_boardUpdate
-	#beq	$t0, $zero, _boardUpdate
-	
-exit: 
-	li	$v0, 10
-	syscall
+
+	j	cardCheck
