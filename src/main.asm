@@ -3,7 +3,7 @@
 # Written by: Sawyer Anderson and Carlos Vazquez
 # Date Created: 11/7/2024
 # Description: The file that gets input (Prompt) and calls
-#        the locationCheck and boardUpdate
+#        the locationCheck and boardUpdate files/subroutines
 #-----------------------------------------------------------
 
 #-----------------------
