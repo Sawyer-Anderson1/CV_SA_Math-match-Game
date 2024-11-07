@@ -39,7 +39,7 @@ cardsRow3:	.word 8, 8, 7, 6
 #------------------
 
 .text
-.globl	main, cardCheck, If, Else
+.globl	main, cardCheck, Exit
 main:
 	lw	$s0, amount
 	
@@ -123,11 +123,11 @@ cardCheck:
 		# decrementing the count
 		addi	$s0, $s0, -1
 		
-		j 	_boardUpdate
+		j 	boardUpdate
 	Else:
 		li	$t0, 0 # 0 for not matching
 		
-		j	_boardUpdate
+		j	boardUpdate
 	#beq	$t0, $zero, _boardUpdate
 	
 Exit: 
