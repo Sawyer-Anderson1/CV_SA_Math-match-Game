@@ -10,7 +10,6 @@
 #-----------------------
 		.data
 
-prompt:		.asciiz "Enter a row index 0-3 and a column index 0-3: "
 matchIndicator: .asciiz "Match!\n"
 columnHeader: 	.asciiz "_|0 1 2 3\n"
 row0: 		.asciiz "0|+ + + +\n"
@@ -28,10 +27,15 @@ displayCardsR3:.asciiz "4x2", "8", "7", "3x2"
 #------------------
 
 .text
-.globl boardUpdate
+.globl boardUpdate, currBoard
+
+# Registers for boardUpdate:
+# 	$a0: the match indicator (0 is not a match, 1 is)
+#	$
+
 
 boardUpdate:
-	beq	$t0, 1, MatchPrint
+	beq	$a0, 1, MatchPrint
 	#else flip for a bit then return
 	
 	TempPrint: # showing the cards choosen, if they don't match
@@ -68,4 +72,23 @@ boardUpdate:
 		# move	$s2, $v0
 		# sw	$s2, timer
 
-	j	cardCheck
+	j	Prompt
+	
+	
+# Registers for boardUpdate:
+# 	
+
+currBoard:
+	li	$v0, 4
+	la	$a0, columnHeader
+	syscall
+	la	$a0, row0
+	syscall
+	la	$a0, row1
+	syscall
+	la	$a0, row2
+	syscall
+	la	$a0, row3
+	syscall
+	
+	jr	$ra
