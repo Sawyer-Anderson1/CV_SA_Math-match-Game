@@ -34,7 +34,7 @@ displayCardsR3:.asciiz "4x2", "8", "7", "3x2"
 #------------------
 
 .text
-.globl	main, cardCheck, Exit
+.globl	main, cardCheck
 main:
 	lw	$s0, amount
 	
