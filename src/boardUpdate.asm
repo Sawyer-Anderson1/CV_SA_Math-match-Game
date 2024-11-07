@@ -1,5 +1,5 @@
 #-----------------------------------------------------------
-# Program File: board.asm
+# Program File: boardUpdate.asm
 # Written by: Sawyer Anderson and Carlos Vazquez
 # Date Created: 9/12/2024
 # Description: The file that controls the board
@@ -18,20 +18,10 @@ row1:		.asciiz "1|+ + + +\n"
 row2:		.asciiz "2|+ + + +\n"
 row3:		.asciiz "3|+ + + +\n"
 
-firstCard:	.word 0, 0
-secondCard: 	.word 0, 0
-amount:		.word 8
-timer:		.word 0
-
 displayCardsR0:	.asciiz "3", "1x1", "1x2", "2x2"
 displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
 displayCardsR2:.asciiz "4", "6", "5", "1x7"
 displayCardsR3:.asciiz "4x2", "8", "7", "3x2" 
-
-cardsRow0:	.word 3, 1, 2, 4
-cardsRow1: 	.word 1, 2, 3, 5
-cardsRow2:	.word 4, 6, 5, 7
-cardsRow3:	.word 8, 8, 7, 6
 
 #------------------
 # Main program body
@@ -39,9 +29,8 @@ cardsRow3:	.word 8, 8, 7, 6
 
 .text
 .globl boardUpdate
-boardUpdate:
-	beq	$s0, 0, exit # when all the cards have been matched a flipped
 
+boardUpdate:
 	beq	$t0, 1, MatchPrint
 	#else flip for a bit then return
 	
