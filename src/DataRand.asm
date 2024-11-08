@@ -45,9 +45,9 @@ card14:    	.asciiz "3x5"
 card15:     	.asciiz "16"
 card16:     	.asciiz "4x4"
 
-#cardDisArr: 	.word card1, card2, card3, card4, card5, card6, card7, card8		# Array of cards that point to their String representation
-#            	.word card9, card10, card11, card12, card13, card14, card15, card16	
-cardDisArr: 	.asciiz "4\0\0","2x2","6\0\0","2x3","8\0\0","2x4","9\0\0","3x3","10\0","2x5","12\0","3x4","15\0","3x5","16\0","4x4"
+cardDisArr: 	.word card1, card2, card3, card4, card5, card6, card7, card8		# Array of cards that point to their String representation
+           	.word card9, card10, card11, card12, card13, card14, card15, card16	
+#cardDisArr: 	.asciiz "4\0\0","2x2","6\0\0","2x3","8\0\0","2x4","9\0\0","3x3","10\0","2x5","12\0","3x4","15\0","3x5","16\0","4x4"
 
 cardValArr: 	.word 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16  		# Array of card values
 indexArr:	.word 0, 1, 2, 3, 4, 5, 6, 7,  8,  9, 10, 11, 12, 13, 14, 15		# The Array to be shuffled
@@ -60,8 +60,8 @@ arraySize:  	.word 16                        # Number of elements in the array
 # Main program body
 #------------------
 .text
-
-main:
+.globl DataRand
+DataRand:
 	# Load array size
  	lw   $t1, arraySize         # Load array size into $t1 (array length)
     	addi $t0, $t1, -1           # $t0 = 15, the last index in the array. Done to decrement to the first index
@@ -89,15 +89,15 @@ main:
 		move $s6 $a0
 		#rem $s6, $v0, $t1
 
-    		# Print random number
-    		move $a0, $s6
-		li $v0, 1
-		syscall
+    		# Print random number			To view generated random numbers 
+    		#move $a0, $s6
+		#li $v0, 1
+		#syscall
     		
     		# Print newline
-    		la $a0, newLine
-		li $v0, 4
-		syscall
+    		#la $a0, newLine
+		#li $v0, 4
+		#syscall
 		
 		mul $t5, $t0, 4		# $t5 = Offset for indexArr[$t0], last index to first
     		mul $t6, $s6, 4		# $t6 = Random Offset for indexArr[$s6]
@@ -111,8 +111,8 @@ main:
    		# Swap elements in cardDisArr at positions $t0 and $t4
     		lw $t7, 0($s2)              # Load indexArr[$t0]
     		lw $t8, 0($s3)              # Load indexArr[$s6]
-		sw $t7, 0($s4)              # Store indexArr[$s6] in newIndArr[$t0]
-		sw $t8, 0($s5)              # Store indexArr[$t0] in newIndArr[$s6]
+		sw $t7, 0($s5)              # Store indexArr[$s6] in newIndArr[$t0]
+		sw $t8, 0($s4)              # Store indexArr[$t0] in newIndArr[$s6]
 
     		# Decrement loop counter and continue
     		addi $t0, $t0, -1
@@ -143,8 +143,9 @@ main:
     		add	$s3, $t3, $t4
     		
 		# Print card description (string) at cardDisArr[$t0]
-		la $a0, 0($s2)              # Load the string
-		li $v0, 4                   # Syscall for printing a string
+		lw $a0, 0($s2)              	# Load the string, pointer implementation
+		#la $a0, 0($s2)			# Load the string, Array of asciiz values
+		li $v0, 4                   	# Syscall for printing a string
 		syscall
 		
 		# Print whitespace
