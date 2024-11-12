@@ -6,13 +6,15 @@
 #-----------------------------------------------------------
 		.data
 
-cardsRow0:	.word 3, 1, 2, 4
-cardsRow1: 	.word 1, 2, 3, 5
-cardsRow2:	.word 4, 6, 5, 7
-cardsRow3:	.word 8, 8, 7, 6
+# cardsRow0:	.word 3, 1, 2, 4
+# cardsRow1: 	.word 1, 2, 3, 5
+# cardsRow2:	.word 4, 6, 5, 7
+# cardsRow3:	.word 8, 8, 7, 6
+
+cardValArr: 	.word 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16 # Array of card values
 
 .text
-.globl	locationCheck, Row0, Row1, Row2, Row3, Return_1, end
+.globl	locationCheck
 locationCheck: # checks and goes to location in the array
 	# a0: the row index
 	# a1: the column index
@@ -30,52 +32,41 @@ locationCheck: # checks and goes to location in the array
 	beq    	$a0, 3, Row3
 	
 	Row0: 
-		la	$t0, cardsRow0
+		la	$t0, cardValArr
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
 		beq	$a2, 0, Return_1
-		
-		j	alteringBoard
 		
 	Row1: 
-		la	$t0, cardsRow1
+		la	$t0, cardValArr+16
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
 		beq	$a2, 0, Return_1
-		
-		j	alteringBoard
 		
 	Row2: 
-		la	$t0, cardsRow2
+		la	$t0, cardValArr+32
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
 		beq	$a2, 0, Return_1
-		
-		j	alteringBoard
 		
 	Row3:
-		la	$t0, cardsRow3
+		la	$t0, cardValArr+48
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
 		beq	$a2, 0, Return_1
-		
-		j	alteringBoard
 		
 	Return_1:
 		lw	$t2, 0($t1)
 		add	$v0, $zero, $t2
 		
-		j	end
-	
-	alteringBoard:
 		j	end
 		
 	end:
