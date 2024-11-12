@@ -23,7 +23,7 @@ row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 # displayCardsR3:	.asciiz "4x2", "8", "7", "3x2" 
 
 cardDisArr: 	.asciiz "4  ","2x2","6  ","2x3","8  ","2x4", "9  ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
-
+flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
 #------------------
 # Main program body
 #------------------
@@ -39,27 +39,119 @@ cardDisArr: 	.asciiz "4  ","2x2","6  ","2x3","8  ","2x4", "9  ", "3x3 ","10 ","2
 
 TempPrint: # showing the cards choosen, if they don't match
 	
+	
+	# to show the incorrect cards for a bit before flipping them back
+	la	$a0, 1
+	li	$v0, 32
+	syscall
+	
 	j	Prompt
 	
+# Registers for just MatchPrint:
+#	t0: the flipped cards array address space
+#	t1: register to hold an immediate (1) for the flipped cards array
+
 MatchPrint: # permanantly change the board
-		
+	# this doesn't actually change the values in rows 0-3 but instead changes the flipped cards array
+	# that indicates where the card value is to be shown
+	
+	# for debugging
 	li	$v0, 4
 	la	$a0, matchIndicator
-	syscall
-		
-	j	Prompt
+	syscall	
 	
+	# to get the position for card 1 in the flipped card array
+	Card1:
+	beq	$a0, 0, R0
+	beq	$a0, 1, R1
+	beq	$a0, 2, R2
+	beq    	$a0, 3, R3
+	
+	R0:	
+		la	$t0, flippedCards
+		
+		mul	$t1, $a1, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	R1:
+		la	$t0, flippedCards+16
+		
+		mul	$t1, $a1, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	R2:
+		la	$t0, flippedCards+32
+		
+		mul	$t1, $a1, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	R3:
+		la	$t0, flippedCards+48
+		
+		mul	$t1, $a1, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+		
+	# to get the position for card 2 in the flipped card array
+	Card2:
+	# adjust the flipped cards array for card 1
+	li	$t1, 1
+	sw	$t1, 0($t0)
+		
+	beq	$a2, 0, r0
+	beq	$a2, 1, r1
+	beq	$a2, 2, r2
+	beq    	$a2, 3, r3
+	
+	r0:	
+		la	$t0, flippedCards
+		
+		mul	$t1, $a3, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	r1:
+		la	$t0, flippedCards+16
+		
+		mul	$t1, $a3, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	r2:
+		la	$t0, flippedCards+32
+		
+		mul	$t1, $a3, 4
+		add	$t0, $t1, $t0
+		
+		j	Card2
+	r3:
+		la	$t0, flippedCards+48
+		
+		mul	$t1, $a3, 4
+		add	$t0, $t1, $t0
+		
+	# adjust the flag for card 2 in the flipped cards array
+	li	$t1, 1
+	sw	$t1, 0($t0)
+	
+	j	Prompt
 	
 # Registers for boardUpdate:
 #	$t1 for the row formats
 #	$t0 for the iterator counters
 #	$t2 for the address of value(s)
-# 	
+# 	$t3 for the flipped cards flag array
 
 currBoard:
 	li	$v0, 4
 	la	$a0, columnHeader
 	syscall
+	
+	lw	$t3, flippedCards
 	
 	la	$t1, row0
 	li	$t0, 0
