@@ -27,6 +27,8 @@ timer:		.word 0
 main:
 	lw	$s0, amount
 	
+	# call the randomizor
+	
 Prompt: # reprompting for the input
 	jal	currBoard
 	
