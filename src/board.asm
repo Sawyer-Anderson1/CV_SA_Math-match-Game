@@ -51,6 +51,9 @@ MatchPrint: # permanantly change the board
 	
 	
 # Registers for boardUpdate:
+#	$t1 for the row formats
+#	$t0 for the iterator counters
+#	$t2 for the address of value(s)
 # 	
 
 currBoard:
