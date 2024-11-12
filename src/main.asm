@@ -71,7 +71,7 @@ cardCheck:
 	lw	$t1, firstCard+4 #the column index for the first card
 	add	$a0, $zero, $t0 # the arugment for the subroutine call
 	add	$a1, $zero, $t1 # the second 
-	li	$a2, 0 # the argument that indicates that the operation is loading for first card
+	# li	$a2, 0 # the argument that indicates that the operation is loading for first card
 	
 	jal	locationCheck # jumping to the subroutine
 	move	$s2, $v0
@@ -80,7 +80,7 @@ cardCheck:
 	lw	$t3, secondCard+4 #the column index for the second card
 	add	$a0, $zero, $t2
 	add	$a1, $zero, $t3
-	li	$a2, 0 # the value that indicates the second card
+	#li	$a2, 0 # the value that indicates the second card
 	
 	jal	locationCheck # jumping to the subroutine
 	move	$s1, $v0
