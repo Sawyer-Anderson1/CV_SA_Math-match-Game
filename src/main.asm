@@ -59,7 +59,9 @@ Prompt: # reprompting for the input
 	syscall
 	move	$t0, $v0
 	sw	$t0, secondCard+4
-		
+	
+	j	cardCheck
+	
 cardCheck:	
 	# t0: the firstCard (the row index)
 	# t1: the column index for the first card
