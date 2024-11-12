@@ -29,7 +29,7 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #------------------
 
 .text
-.globl TempPrint, MatchPrint, currBoard
+.globl TempPrint, MatchPrint, currBoard, flippedCardPrint
 
 # Registers for TempPrint/MatchPrint:
 #	a0: the firstCard (the row index)
@@ -145,13 +145,15 @@ MatchPrint: # permanantly change the board
 #	$t0 for the iterator counters
 #	$t2 for the address of value(s)
 # 	$t3 for the flipped cards flag array
+#	$t4 for the flipped card address
+#	$t5 for the flipped card value
 
 currBoard:
 	li	$v0, 4
 	la	$a0, columnHeader
 	syscall
 	
-	lw	$t3, flippedCards
+	la	$t3, flippedCards
 	
 	la	$t1, row0
 	li	$t0, 0
@@ -159,50 +161,116 @@ currBoard:
 	row0Loop:
 		add	$t2, $t1, $t0
 		
-		la 	$a0, 0($t2)      # Load address of each cell in row0   
-    		syscall              # Print the cell content
+		# check the flipped cards value
+		add	$t4, $t3, $t0
+		la	$t5, 0($t4)
+		
+		bne	$t5, 1, else0
+		if0:
+			move	$a0, $t0
+			jal	flippedCardPrint
+			j	end_if0
+		else0: 
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		end_if0:
     		
     		addi 	$t0, $t0, 4
     		
     	ble $t0, 20, row0Loop # Print all 5 elements in row
+	
+	la	$t3, flippedCards+16
 	
 	la	$t1, row1
 	li	$t0, 0
 	
 	row1Loop:
 		add	$t2, $t1, $t0
-
-		la 	$a0, 0($t2)      # Load address of each cell in row0   
-  		syscall          
+		
+		# check the flipped cards value
+		add	$t4, $t3, $t0
+		la	$t5, 0($t4)
+		
+		bne	$t5, 1, else1
+		if1:
+			move	$a0, $t0
+			jal	flippedCardPrint
+			j	end_if1
+		else1: 
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		end_if1:
   		
   		addi 	$t0, $t0, 4
 		
 	ble	$t0, 20, row1Loop
+	
+	la	$t3, flippedCards+32
 	
 	la	$t1, row2
 	li	$t0, 0
 	
 	row2Loop:
 		add	$t2, $t1, $t0
-
-		la 	$a0, 0($t2)      # Load address of each cell in row0   
-  		syscall          
+		
+		# check the flipped cards value
+		add	$t4, $t3, $t0
+		la	$t5, 0($t4)
+		
+		bne	$t5, 1, else2
+		if2:
+			move	$a0, $t0
+			jal	flippedCardPrint
+			j	end_if2
+		else2: 
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		end_if2:
   		
   		addi 	$t0, $t0, 4
 		
 	ble	$t0, 20, row2Loop
 	
+	la	$t3, flippedCards+48
+
 	la	$t1, row3
 	li	$t0, 0
 	
 	row3Loop:
 		add	$t2, $t1, $t0
-
-		la 	$a0, 0($t2)      # Load address of each cell in row0   
-  		syscall          
+		
+		# check the flipped cards value
+		add	$t4, $t3, $t0
+		la	$t5, 0($t4)
+		
+		bne	$t5, 1, else3
+		if3:
+			move	$a0, $t0
+			jal	flippedCardPrint
+			j	end_if3
+		else3: 
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		end_if3:     
   		
   		addi 	$t0, $t0, 4
 		
 	ble	$t0, 20, row3Loop
+	
+	jr	$ra
+	
+# Registers:
+#	$a0: the adjusted index position
+#	$t0: the base address of the card display array (cardDisArr)
+
+flippedCardPrint:
+	la	$t0, cardDisArr
+	
+	add	$t0, $t0, $a0 # get to the actual index position
+	
+	# display the value at that position
+	li	$v0, 4
+	la	$a0, 0($t0)
+	syscall
 	
 	jr	$ra
