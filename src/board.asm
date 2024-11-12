@@ -11,16 +11,18 @@
 		.data
 
 matchIndicator: .asciiz "Match!\n"
-columnHeader: 	.asciiz "_|0 1 2 3\n"
-row0: 		.asciiz "0|+ + + +\n"
-row1:		.asciiz "1|+ + + +\n"
-row2:		.asciiz "2|+ + + +\n"
-row3:		.asciiz "3|+ + + +\n"
+columnHeader: 	.asciiz "_| 0  1  2  3\n"
+row0: 		.asciiz "0|\0", " + ", " + ", " + ", " + ", "\n\0\0"
+row1:		.asciiz "1|\0", " + ", " + ", " + ", " + ", "\n\0\0"
+row2:		.asciiz "2|\0", " + ", " + ", " + ", " + ", "\n\0\0"
+row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 
-displayCardsR0:	.asciiz "3", "1x1", "1x2", "2x2"
-displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
-displayCardsR2:.asciiz "4", "6", "5", "1x7"
-displayCardsR3:.asciiz "4x2", "8", "7", "3x2" 
+# displayCardsR0:	.asciiz "3", "1x1", "1x2", "2x2"
+# displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
+# displayCardsR2:	.asciiz "4", "6", "5", "1x7"
+# displayCardsR3:	.asciiz "4x2", "8", "7", "3x2" 
+
+cardDisArr: 	.asciiz "4  ","2x2","6  ","2x3","8  ","2x4", "9  ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
 
 #------------------
 # Main program body
@@ -55,13 +57,57 @@ currBoard:
 	li	$v0, 4
 	la	$a0, columnHeader
 	syscall
-	la	$a0, row0
-	syscall
-	la	$a0, row1
-	syscall
-	la	$a0, row2
-	syscall
-	la	$a0, row3
-	syscall
+	
+	la	$t1, row0
+	li	$t0, 0
+	
+	row0Loop:
+		add	$t2, $t1, $t0
+		
+		la 	$a0, 0($t2)      # Load address of each cell in row0   
+    		syscall              # Print the cell content
+    		
+    		addi 	$t0, $t0, 4
+    		
+    	ble $t0, 20, row0Loop # Print all 5 elements in row
+	
+	la	$t1, row1
+	li	$t0, 0
+	
+	row1Loop:
+		add	$t2, $t1, $t0
+
+		la 	$a0, 0($t2)      # Load address of each cell in row0   
+  		syscall          
+  		
+  		addi 	$t0, $t0, 4
+		
+	ble	$t0, 20, row1Loop
+	
+	la	$t1, row2
+	li	$t0, 0
+	
+	row2Loop:
+		add	$t2, $t1, $t0
+
+		la 	$a0, 0($t2)      # Load address of each cell in row0   
+  		syscall          
+  		
+  		addi 	$t0, $t0, 4
+		
+	ble	$t0, 20, row2Loop
+	
+	la	$t1, row3
+	li	$t0, 0
+	
+	row3Loop:
+		add	$t2, $t1, $t0
+
+		la 	$a0, 0($t2)      # Load address of each cell in row0   
+  		syscall          
+  		
+  		addi 	$t0, $t0, 4
+		
+	ble	$t0, 20, row3Loop
 	
 	jr	$ra
