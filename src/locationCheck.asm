@@ -18,9 +18,6 @@ cardValArr: 	.word 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16 # Arra
 locationCheck: # checks and goes to location in the array
 	# a0: the row index
 	# a1: the column index
-	# a2: 0, 1, or 2 for the loading and storing (changing the board)
-		# 0 is for getting value of card 1 & 2
-		# 1 is for changing board
 	# t0: the row
 	# t1: the index position for a row
 	# t2: the value for loading which will be transfered to 
@@ -32,38 +29,38 @@ locationCheck: # checks and goes to location in the array
 	beq    	$a0, 3, Row3
 	
 	Row0: 
-		la	$t0, cardValArr
+		lw	$t0, cardValArr
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
-		beq	$a2, 0, Return_1
+		j	Return
 		
 	Row1: 
-		la	$t0, cardValArr+16
+		lw	$t0, cardValArr+16
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
-		beq	$a2, 0, Return_1
+		j	Return
 		
 	Row2: 
-		la	$t0, cardValArr+32
+		lw	$t0, cardValArr+32
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
-		beq	$a2, 0, Return_1
+		j	Return
 		
 	Row3:
-		la	$t0, cardValArr+48
+		lw	$t0, cardValArr+48
 		
 		mul	$t1, $a1, 4
 		add	$t1, $t1, $t0
 		
-		beq	$a2, 0, Return_1
+		j	Return
 		
-	Return_1:
+	Return:
 		lw	$t2, 0($t1)
 		add	$v0, $zero, $t2
 		
