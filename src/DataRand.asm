@@ -22,22 +22,6 @@
 #	$s1: memory address for cardDisArr
 #	$s2: memory address for newIndArr
 # 	$s3: memory address for flagArr
-
-# Changed:
-#	$t0: 16, the arraysize for the arrays
-#	$t1: 15, the last index in the arrays
-#	$s0: Randomly generated index integer, 0 to 15 
-#		Later becomes: the Offset using newIndArr to print
-#	$t3: current rightmost index address in indexArr
-#	$t2: Memory position for cardValArr[$t1]
-#	$t5: randomized index address in newIndArr
-#	$t3: Offset for random index in array 0 to 15 
-#
-#	$s0: memory address for cardDisArr
-#	$s3: memory address for cardDisArr			$s2
-#	$s2: newIndArr						$t4
-#	$s7: flagArr						$t5
-# 	$t6: current index from the new index array		$s4
 #--------------------------------------------------
 # Declare some constants
 #-----------------------   
@@ -97,6 +81,7 @@ DataRand:
  	li   $t0, 16         		# Load array size into $t0 (array length)
     	addi $t1, $t0, -1           	# $t1 = 15, the last index in the array. Done to decrement to the first index
 
+	lw  
     	# Set up base addresses
     	la $s0, cardDisArr		# $s0, Base address of cardDisArr
     	la $s1, cardValArr		# $t3, Base address of cardValArr
@@ -162,44 +147,39 @@ DataRand:
 
 	print_loop:
     		# Check if we are done printing
-    		beq $t1, 16, Exit          # If index == array size, go to exit
+    		#beq $t1, 16, Exit          # If index == array size, go to exit
     		
 		# Calculate memory positions for printing card description and value
-		mul 	$t2, $t1, 4             # Calculate offset for new index array
-		lw 	$t6, newIndArr($t2)	# Load current index from the new index array
-		#add 	$t3, $s2, $t2
-		#lw	$t6, 0($t3)
-		mul	$t2, $t6, 4		# Offset to actual current index
+		#mul 	$t2, $t1, 4             # Calculate offset for new index array
+		#lw 	$t6, newIndArr($t2)	# Load current index from the new index array
+		#mul	$t2, $t6, 4		# Offset to actual current index
 		
-		add	$t4, $s0, $t2		# Memory position for cardDisArr[$t1]
-    		add	$t5, $s1, $t2		# Memory position for cardValArr[$t1]
+		#add	$t4, $s0, $t2		# Memory position for cardDisArr[$t1]
+    		#add	$t5, $s1, $t2		# Memory position for cardValArr[$t1]
     		
 		# Print card description (string) at cardDisArr[$t1]
-		lw $a0, 0($t4)              	# Load the string, pointer implementation
-		#la $a0, 0($t4)			# Load the string, Array of asciiz values
-		li $v0, 4                   	# Syscall for printing a string
-		syscall
+		#lw $a0, 0($t4)              	# Load the string, pointer implementation
+		#li $v0, 4                   	# Syscall for printing a string
+		#syscall
 		
 		# Print whitespace
-    		la $a0, space 
-		li $v0, 4
-		syscall
+    		#la $a0, space 
+		#li $v0, 4
+		#syscall
 
     		# Print corresponding value in cardValArr[$t1]
-    		lw $a0, 0($t5)              # Load integer value at cardValArr[$t1]
-    		li $v0, 1                   # Syscall for printing an integer
-		syscall
+    		#lw $a0, 0($t5)              # Load integer value at cardValArr[$t1]
+    		#li $v0, 1                   # Syscall for printing an integer
+		#syscall
 
     		# Print newline
-    		la $a0, newLine
-		li $v0, 4
-		syscall
+    		#la $a0, newLine
+		#li $v0, 4
+		#syscall
     
     		# Increment index and repeat
-    		addi $t1, $t1, 1
-    		j print_loop
+    		#addi $t1, $t1, 1
+    		#j print_loop
 
 Exit:
-    # Exit program
-    li $v0, 10                  # Syscall for exit
-    syscall
+    jr $s2
