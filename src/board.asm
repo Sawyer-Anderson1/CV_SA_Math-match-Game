@@ -29,7 +29,7 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #------------------
 
 .text
-.globl TempPrint, MatchPrint, currBoard, flippedCardPrint
+.globl TempPrint, MatchPrint, EndCard2, currBoard
 
 # Registers for TempPrint/MatchPrint:
 #	a0: the firstCard (the row index)
@@ -38,7 +38,6 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #	a3: the column index for the second card
 
 TempPrint: # showing the cards choosen, if they don't match
-	
 	
 	# to show the incorrect cards for a bit before flipping them back
 	la	$a0, 1
@@ -68,39 +67,37 @@ MatchPrint: # permanantly change the board
 	beq    	$a0, 3, R3
 	
 	R0:	
-		la	$t0, flippedCards
+		lw	$t0, flippedCards
 		
 		mul	$t1, $a1, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
 		j	Card2
 	R1:
-		la	$t0, flippedCards+16
+		lw	$t0, flippedCards+16
 		
 		mul	$t1, $a1, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
 		j	Card2
 	R2:
-		la	$t0, flippedCards+32
+		lw	$t0, flippedCards+32
 		
 		mul	$t1, $a1, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
 		j	Card2
 	R3:
-		la	$t0, flippedCards+48
+		lw	$t0, flippedCards+48
 		
 		mul	$t1, $a1, 4
-		add	$t0, $t1, $t0
-		
-		j	Card2
+		add	$t2, $t1, $t0
 		
 	# to get the position for card 2 in the flipped card array
 	Card2:
 	# adjust the flipped cards array for card 1
 	li	$t1, 1
-	sw	$t1, 0($t0)
+	sw	$t1, 0($t2)
 		
 	beq	$a2, 0, r0
 	beq	$a2, 1, r1
@@ -108,35 +105,36 @@ MatchPrint: # permanantly change the board
 	beq    	$a2, 3, r3
 	
 	r0:	
-		la	$t0, flippedCards
+		lw	$t0, flippedCards
 		
 		mul	$t1, $a3, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
-		j	Card2
+		j	EndCard2
 	r1:
-		la	$t0, flippedCards+16
+		lw	$t0, flippedCards+16
 		
 		mul	$t1, $a3, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
-		j	Card2
+		j	EndCard2
 	r2:
-		la	$t0, flippedCards+32
+		lw	$t0, flippedCards+32
 		
 		mul	$t1, $a3, 4
-		add	$t0, $t1, $t0
+		add	$t2, $t1, $t0
 		
-		j	Card2
+		j	EndCard2
 	r3:
-		la	$t0, flippedCards+48
+		lw	$t0, flippedCards+48
 		
 		mul	$t1, $a3, 4
-		add	$t0, $t1, $t0
-		
+		add	$t2, $t1, $t0
+	
+	EndCard2:	
 	# adjust the flag for card 2 in the flipped cards array
 	li	$t1, 1
-	sw	$t1, 0($t0)
+	sw	$t1, 0($t2)
 	
 	j	Prompt
 	
@@ -161,9 +159,12 @@ currBoard:
 	row0Loop:
 		add	$t2, $t1, $t0
 		
+		beq	$t0, 0, else0
+		beq	$t0, 20, else0
+		
 		# check the flipped cards value
 		add	$t4, $t3, $t0
-		la	$t5, 0($t4)
+		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else0
 		if0:
@@ -187,12 +188,16 @@ currBoard:
 	row1Loop:
 		add	$t2, $t1, $t0
 		
+		beq	$t0, 0, else0
+		beq	$t0, 20, else0
+		
 		# check the flipped cards value
 		add	$t4, $t3, $t0
-		la	$t5, 0($t4)
+		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else1
 		if1:
+			addi	$t0, $t0, 16
 			move	$a0, $t0
 			jal	flippedCardPrint
 			j	end_if1
@@ -213,12 +218,16 @@ currBoard:
 	row2Loop:
 		add	$t2, $t1, $t0
 		
+		beq	$t0, 0, else0
+		beq	$t0, 20, else0
+		
 		# check the flipped cards value
 		add	$t4, $t3, $t0
-		la	$t5, 0($t4)
+		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else2
 		if2:
+			addi	$t0, $t0, 32
 			move	$a0, $t0
 			jal	flippedCardPrint
 			j	end_if2
@@ -239,12 +248,16 @@ currBoard:
 	row3Loop:
 		add	$t2, $t1, $t0
 		
+		beq	$t0, 0, else0
+		beq	$t0, 20, else0
+		
 		# check the flipped cards value
 		add	$t4, $t3, $t0
-		la	$t5, 0($t4)
+		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else3
 		if3:
+			addi	$t0, $t0, 48
 			move	$a0, $t0
 			jal	flippedCardPrint
 			j	end_if3
@@ -266,11 +279,11 @@ currBoard:
 flippedCardPrint:
 	la	$t0, cardDisArr
 	
-	add	$t0, $t0, $a0 # get to the actual index position
+	add	$t1, $t0, $a0 # get to the actual index position
 	
 	# display the value at that position
 	li	$v0, 4
-	la	$a0, 0($t0)
+	la	$a0, 0($t1)
 	syscall
 	
 	jr	$ra
