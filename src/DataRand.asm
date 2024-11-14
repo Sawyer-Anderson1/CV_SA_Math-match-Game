@@ -7,22 +7,37 @@
 # Registers:
 #	$t0: 16, the arraysize for the arrays
 #	$t1: 15, the last index in the arrays
-#	$t2: memory address for cardDisArr
-#	$t3: memory address for cardDisArr
-#	$t4: Randomly generated index integer, 0 to 15 
+#		decremented to store, then incremented to print
+#	$t2: Randomly generated index integer, 0 to 15
 #		Later becomes: Offset for the newIndArr
-#	$t5: Decrementing Offset for indexArr[$t1], from index 15 to 0
-#	$t6: Randomized Offset for indexArr[$t4] 
-#	$t7: integer given from indexArr
-#	$t8: random index into rightmost index in newIndArr
+#	$t3: Randomized Offset for arrays
+#	$t4: Memory address for current index in cardDisArr
+#		Memory position for cardDisArr[$t1]
+#	$t5: Memory position for cardValArr[$t1]		
+# 	$t6: random index address in newIndArr to store
+#		current index from the new index array
+#	$t7: The random number to flag check		
 #
-#	$s0: indexArr
-#	$s1: newIndArr
-#	$s2: current rightmost index address in indexArr
-#	$s3: randomized index address in indexArr
-#	$s4: randomized index address in newIndArr
-# 	$s5: current index from the new index array
-# 	$s6: flagArr
+#	$s0: memory address for cardDisArr
+#	$s1: memory address for cardDisArr
+#	$s2: memory address for newIndArr
+# 	$s3: memory address for flagArr
+
+# Changed:
+#	$t0: 16, the arraysize for the arrays
+#	$t1: 15, the last index in the arrays
+#	$s0: Randomly generated index integer, 0 to 15 
+#		Later becomes: the Offset using newIndArr to print
+#	$t3: current rightmost index address in indexArr
+#	$t2: Memory position for cardValArr[$t1]
+#	$t5: randomized index address in newIndArr
+#	$t3: Offset for random index in array 0 to 15 
+#
+#	$s0: memory address for cardDisArr
+#	$s3: memory address for cardDisArr			$s2
+#	$s2: newIndArr						$t4
+#	$s7: flagArr						$t5
+# 	$t6: current index from the new index array		$s4
 #--------------------------------------------------
 # Declare some constants
 #-----------------------   
@@ -83,11 +98,10 @@ DataRand:
     	addi $t1, $t0, -1           	# $t1 = 15, the last index in the array. Done to decrement to the first index
 
     	# Set up base addresses
-    	la $t2, cardDisArr		# $t2, Base address of cardDisArr
-    	la $t3, cardValArr		# $t3, Base address of cardValArr
-    	#la $s0, indexArr		# $s0, Base address of IndexArr
-    	la $s1, newIndArr		# $s1, Base address of newIndArr
-    	la $s6, flagArr			# $s6, Base address of flagArr
+    	la $s0, cardDisArr		# $s0, Base address of cardDisArr
+    	la $s1, cardValArr		# $t3, Base address of cardValArr
+    	la $s2, newIndArr		# $s2, Base address of newIndArr
+    	la $s3, flagArr			# $s3, Base address of flagArr
 
 		
 	# Initialize random seed (simple example, usually based on a timer or other source)
@@ -104,11 +118,11 @@ DataRand:
     		addi $a1, $zero, 16
 		li $v0, 42             	# Syscall for generating random integer
     		syscall
-		#move $t4 $a0		# $t4, the random integer 0 - 15
-		rem $t4, $a0, 16
+		#move $t2 $a0		# $t2, the random integer 0 - 15
+		rem $t2, $a0, 16
 		
     		# Print random number			To view generated random numbers 
-    		move $a0, $t4
+    		move $a0, $t2
 		li $v0, 1
 		syscall
     		
@@ -117,19 +131,18 @@ DataRand:
 		li $v0, 4
 		syscall
 		
-		mul $t5, $t1, 4		# $t5 = Offset for Current rightmost index indexArr[$t1]
-    		mul $t6, $t4, 4		# $t6 = Offset for Random Index in indexArr[$t4]
+    		mul $t3, $t2, 4		# $t3 = Offset for Random Index for arrays
     		
     		# Calculate Memory positions
-		add $s5, $s1, $t6	# Memory position for newIndArr[$t4], random index address in newIndArr to store
-		add $s7, $s6, $t6	# Memory position for flagArr[$t4],   random index address in newIndArr to prevent wrong storing 
+		add $t6, $s2, $t3	# Memory position for newIndArr[$t2], random index address in newIndArr to store
+		add $s7, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
 		
-		# Check if Memory position for newIndArr[$t4] is available to store in
-		lw $t7, ($s7)
-		bnez $t7, redo		# If the memory position is not available, redo the random number generation
+		# Check if Memory position for newIndArr[$t2] is available to store in
+		lw $t7, ($s7)		# $t7, the random number to flag check
+		bnez $t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
 		
-		sw $t4, ($s7)			# Flag random element if so
-		sw $t1, 0($s5)			# Store $t1 into $s5, store current righmost element in newIndArr[$t4], a random index in newIndArr
+		sw $t2, ($s7)			# Flag random element if so
+		sw $t1, 0($t6)			# Store $t1 into $t6, store current righmost element in newIndArr[$t2], a random index in newIndArr
 
     		# Decrement loop counter and continue
     		addi $t1, $t1, -1	# Decrement the rightmost index, if a available random position was found 
@@ -152,18 +165,18 @@ DataRand:
     		beq $t1, 16, Exit          # If index == array size, go to exit
     		
 		# Calculate memory positions for printing card description and value
-		mul 	$t4, $t1, 4             # Calculate offset for new index array
-		lw 	$s5, newIndArr($t4)	# Load current index from the new index array
-		#add 	$t6, $s1, $t4
-		#lw	$s5, 0($t6)
-		mul	$t4, $s5, 4		# Offset to actual current index
+		mul 	$t2, $t1, 4             # Calculate offset for new index array
+		lw 	$t6, newIndArr($t2)	# Load current index from the new index array
+		#add 	$t3, $s2, $t2
+		#lw	$t6, 0($t3)
+		mul	$t2, $t6, 4		# Offset to actual current index
 		
-		add	$s2, $t2, $t4		# Memory position for cardDisArr[$t1]
-    		add	$s3, $t3, $t4		# Memory position for cardValArr[$t1]
+		add	$t4, $s0, $t2		# Memory position for cardDisArr[$t1]
+    		add	$t5, $s1, $t2		# Memory position for cardValArr[$t1]
     		
 		# Print card description (string) at cardDisArr[$t1]
-		lw $a0, 0($s2)              	# Load the string, pointer implementation
-		#la $a0, 0($s2)			# Load the string, Array of asciiz values
+		lw $a0, 0($t4)              	# Load the string, pointer implementation
+		#la $a0, 0($t4)			# Load the string, Array of asciiz values
 		li $v0, 4                   	# Syscall for printing a string
 		syscall
 		
@@ -173,7 +186,7 @@ DataRand:
 		syscall
 
     		# Print corresponding value in cardValArr[$t1]
-    		lw $a0, 0($s3)              # Load integer value at cardValArr[$t1]
+    		lw $a0, 0($t5)              # Load integer value at cardValArr[$t1]
     		li $v0, 1                   # Syscall for printing an integer
 		syscall
 
