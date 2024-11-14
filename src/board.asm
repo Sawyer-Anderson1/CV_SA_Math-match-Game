@@ -55,6 +55,9 @@ MatchPrint: # permanantly change the board
 	# this doesn't actually change the values in rows 0-3 but instead changes the flipped cards array
 	# that indicates where the card value is to be shown
 	
+	# move $a0 to a register, to keep the debugging matchIndicator
+	move	$t3, $a0
+	
 	# for debugging
 	li	$v0, 4
 	la	$a0, matchIndicator
@@ -62,10 +65,10 @@ MatchPrint: # permanantly change the board
 	
 	# to get the position for card 1 in the flipped card array
 	Card1:
-	beq	$a0, 0, R0
-	beq	$a0, 1, R1
-	beq	$a0, 2, R2
-	beq    	$a0, 3, R3
+	beq	$t3, 0, R0
+	beq	$t3, 1, R1
+	beq	$t3, 2, R2
+	beq    	$t3, 3, R3
 	
 	R0:	
 		la	$t0, flippedCards
