@@ -24,12 +24,13 @@ row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 
 cardDisArr: 	.asciiz "4  ","2x2","6  ","2x3","8  ","2x4", "9  ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
 flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
+#		      0  4  8  12 16 20 24 28 32 36 40 44 48 52 56 60
 #------------------
 # Main program body
 #------------------
 
 .text
-.globl TempPrint, MatchPrint, EndCard2, currBoard
+.globl TempPrint, MatchPrint, EndCard2, currBoard, flippedCardPrint
 
 # Registers for TempPrint/MatchPrint:
 #	a0: the firstCard (the row index)
@@ -44,7 +45,7 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$v0, 32
 	syscall
 	
-	j	Prompt
+	jr	$ra
 	
 # Registers for just MatchPrint:
 #	t0: the flipped cards array address space
@@ -67,28 +68,28 @@ MatchPrint: # permanantly change the board
 	beq    	$a0, 3, R3
 	
 	R0:	
-		lw	$t0, flippedCards
+		la	$t0, flippedCards
 		
 		mul	$t1, $a1, 4
 		add	$t2, $t1, $t0
 		
 		j	Card2
 	R1:
-		lw	$t0, flippedCards+16
+		la	$t0, flippedCards+16
 		
 		mul	$t1, $a1, 4
 		add	$t2, $t1, $t0
 		
 		j	Card2
 	R2:
-		lw	$t0, flippedCards+32
+		la	$t0, flippedCards+32
 		
 		mul	$t1, $a1, 4
 		add	$t2, $t1, $t0
 		
 		j	Card2
 	R3:
-		lw	$t0, flippedCards+48
+		la	$t0, flippedCards+48
 		
 		mul	$t1, $a1, 4
 		add	$t2, $t1, $t0
@@ -105,38 +106,38 @@ MatchPrint: # permanantly change the board
 	beq    	$a2, 3, r3
 	
 	r0:	
-		lw	$t0, flippedCards
+		la	$t0, flippedCards
 		
 		mul	$t1, $a3, 4
 		add	$t2, $t1, $t0
 		
 		j	EndCard2
 	r1:
-		lw	$t0, flippedCards+16
+		la	$t0, flippedCards+16
 		
 		mul	$t1, $a3, 4
 		add	$t2, $t1, $t0
 		
 		j	EndCard2
 	r2:
-		lw	$t0, flippedCards+32
+		la	$t0, flippedCards+32
 		
 		mul	$t1, $a3, 4
 		add	$t2, $t1, $t0
 		
 		j	EndCard2
 	r3:
-		lw	$t0, flippedCards+48
+		la	$t0, flippedCards+48
 		
 		mul	$t1, $a3, 4
 		add	$t2, $t1, $t0
 	
 	EndCard2:	
-	# adjust the flag for card 2 in the flipped cards array
-	li	$t1, 1
-	sw	$t1, 0($t2)
+		# adjust the flag for card 2 in the flipped cards array
+		li	$t1, 1
+		sw	$t1, 0($t2)
 	
-	j	Prompt
+	jr	$ra
 	
 # Registers for boardUpdate:
 #	$t1 for the row formats
@@ -151,6 +152,9 @@ currBoard:
 	la	$a0, columnHeader
 	syscall
 	
+	# saving $ra into $t7
+	move	$t7, $ra
+	
 	la	$t3, flippedCards
 	
 	la	$t1, row0
@@ -163,22 +167,22 @@ currBoard:
 		beq	$t0, 20, else0
 		
 		# check the flipped cards value
-		add	$t4, $t3, $t0
+		subi	$t6, $t0, 4
+		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else0
 		if0:
-			move	$a0, $t0
+			move	$a0, $t6
 			jal	flippedCardPrint
 			j	end_if0
 		else0: 
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if0:
+    			addi 	$t0, $t0, 4
     		
-    		addi 	$t0, $t0, 4
-    		
-    	ble $t0, 20, row0Loop # Print all 5 elements in row
+    	blt $t0, 24, row0Loop # Print all 5 elements in row
 	
 	la	$t3, flippedCards+16
 	
@@ -188,27 +192,27 @@ currBoard:
 	row1Loop:
 		add	$t2, $t1, $t0
 		
-		beq	$t0, 0, else0
-		beq	$t0, 20, else0
+		beq	$t0, 0, else1
+		beq	$t0, 20, else1
 		
 		# check the flipped cards value
-		add	$t4, $t3, $t0
+		subi	$t6, $t0, 4
+		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else1
 		if1:
-			addi	$t0, $t0, 16
-			move	$a0, $t0
+			addi	$t6, $t6, 16
+			move	$a0, $t6
 			jal	flippedCardPrint
 			j	end_if1
 		else1: 
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if1:
-  		
-  		addi 	$t0, $t0, 4
+  			addi 	$t0, $t0, 4
 		
-	ble	$t0, 20, row1Loop
+	blt	$t0, 24, row1Loop
 	
 	la	$t3, flippedCards+32
 	
@@ -218,27 +222,27 @@ currBoard:
 	row2Loop:
 		add	$t2, $t1, $t0
 		
-		beq	$t0, 0, else0
-		beq	$t0, 20, else0
+		beq	$t0, 0, else2
+		beq	$t0, 20, else2
 		
 		# check the flipped cards value
-		add	$t4, $t3, $t0
+		subi	$t6, $t0, 4
+		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else2
 		if2:
-			addi	$t0, $t0, 32
-			move	$a0, $t0
+			addi	$t6, $t6, 32
+			move	$a0, $t6
 			jal	flippedCardPrint
 			j	end_if2
 		else2: 
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if2:
-  		
-  		addi 	$t0, $t0, 4
+  			addi 	$t0, $t0, 4
 		
-	ble	$t0, 20, row2Loop
+	blt	$t0, 24, row2Loop
 	
 	la	$t3, flippedCards+48
 
@@ -248,16 +252,17 @@ currBoard:
 	row3Loop:
 		add	$t2, $t1, $t0
 		
-		beq	$t0, 0, else0
-		beq	$t0, 20, else0
+		beq	$t0, 0, else3
+		beq	$t0, 20, else3
 		
 		# check the flipped cards value
-		add	$t4, $t3, $t0
+		subi	$t6, $t0, 4
+		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
 		bne	$t5, 1, else3
 		if3:
-			addi	$t0, $t0, 48
+			addi	$t6, $t6, 48
 			move	$a0, $t0
 			jal	flippedCardPrint
 			j	end_if3
@@ -265,11 +270,12 @@ currBoard:
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if3:     
-  		
-  		addi 	$t0, $t0, 4
+  			addi 	$t0, $t0, 4
 		
-	ble	$t0, 20, row3Loop
+		blt	$t0, 24, row3Loop
 	
+	# move saved $ra value into $ra again
+	move 	$ra, $t7
 	jr	$ra
 	
 # Registers:
