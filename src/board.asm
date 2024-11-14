@@ -22,7 +22,7 @@ row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 # displayCardsR2:	.asciiz "4", "6", "5", "1x7"
 # displayCardsR3:	.asciiz "4x2", "8", "7", "3x2" 
 
-cardDisArr: 	.asciiz "4  ","2x2","6  ","2x3","8  ","2x4", "9  ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
+cardDisArr: 	.asciiz " 4 ","2x2"," 6 ","2x3"," 8 ","2x4", " 9 ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
 flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
 #		      0  4  8  12 16 20 24 28 32 36 40 44 48 52 56 60
 #------------------
