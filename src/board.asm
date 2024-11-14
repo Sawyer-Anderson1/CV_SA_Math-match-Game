@@ -174,7 +174,7 @@ currBoard:
 		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
-		bne	$t5, 1, else0
+		beq	$t5, 0, else0
 		if0:
 			move	$a0, $t6
 			jal	flippedCardPrint
@@ -203,7 +203,7 @@ currBoard:
 		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
-		bne	$t5, 1, else1
+		beq	$t5, 0, else1
 		if1:
 			addi	$t6, $t6, 16
 			move	$a0, $t6
@@ -233,7 +233,7 @@ currBoard:
 		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
-		bne	$t5, 1, else2
+		beq	$t5, 0, else2
 		if2:
 			addi	$t6, $t6, 32
 			move	$a0, $t6
@@ -263,10 +263,10 @@ currBoard:
 		add	$t4, $t3, $t6
 		lw	$t5, 0($t4)
 		
-		bne	$t5, 1, else3
+		beq	$t5, 0, else3
 		if3:
 			addi	$t6, $t6, 48
-			move	$a0, $t0
+			move	$a0, $t6
 			jal	flippedCardPrint
 			j	end_if3
 		else3: 
@@ -286,9 +286,9 @@ currBoard:
 #	$t0: the base address of the card display array (cardDisArr)
 
 flippedCardPrint:
-	la	$t0, cardDisArr
+	la	$t5, cardDisArr
 	
-	add	$t1, $t0, $a0 # get to the actual index position
+	add	$t1, $t5, $a0 # get to the actual index position
 	
 	# display the value at that position
 	li	$v0, 4
