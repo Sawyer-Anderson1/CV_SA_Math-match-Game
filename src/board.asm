@@ -155,8 +155,8 @@ currBoard:
 	la	$a0, columnHeader
 	syscall
 	
-	# saving $ra into $t7
-	move	$t7, $ra
+	# saving $ra into $s0
+	move	$s0, $ra
 	
 	la	$t3, flippedCards
 	
@@ -278,7 +278,7 @@ currBoard:
 		blt	$t0, 24, row3Loop
 	
 	# move saved $ra value into $ra again
-	move 	$ra, $t7
+	move 	$ra, $s0
 	jr	$ra
 	
 # Registers:
@@ -286,13 +286,13 @@ currBoard:
 #	$t0: the base address of the card display array (cardDisArr)
 
 flippedCardPrint:
-	la	$t5, cardDisArr
+	la	$t7, cardDisArr
 	
-	add	$t1, $t5, $a0 # get to the actual index position
+	add	$s1, $t7, $a0 # get to the actual index position
 	
 	# display the value at that position
 	li	$v0, 4
-	la	$a0, 0($t1)
+	la	$a0, 0($s1)
 	syscall
 	
 	jr	$ra
