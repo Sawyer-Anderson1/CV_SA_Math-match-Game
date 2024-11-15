@@ -12,7 +12,7 @@
 		.data
 
 prompt:		.asciiz "Enter a row index 0-3 and a column index 0-3: "
-
+gameFinished: 	.asciiz "You won!\n"
 firstCard:	.word 0, 0
 secondCard: 	.word 0, 0
 amount:		.word 8
@@ -31,6 +31,9 @@ main:
 	
 	
 Prompt: # reprompting for the input
+	#the exit condition
+	beq	$s0, -1, Exit # when all the cards have been matched a flipped
+		
 	jal	currBoard
 	
 	li	$v0, 4
@@ -93,9 +96,6 @@ cardCheck:
 		# decrementing the count
 		addi	$s0, $s0, -1
 		
-		#the exit condition
-		beq	$s0, -1, Exit # when all the cards have been matched a flipped
-		
 		lw	$t0, firstCard
 		lw	$t1, firstCard+4 #the column index for the first card
 		move	$a0, $t0 # the arugment for the subroutine call
@@ -125,5 +125,9 @@ cardCheck:
 		jal	TempPrint
 		j	Prompt
 Exit: 
+	li	$v0, 4
+	la	$a0, gameFinished
+	syscall
+	
 	li	$v0, 10
 	syscall
