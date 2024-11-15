@@ -76,7 +76,8 @@ TempPrint: # showing the cards choosen, if they don't match
 			mul	$s7, $t6, 4
 			
 			beq 	$s6, $t6, correct0
-			bne 	$s7, $t6, Else0
+			beq 	$s7, $t6, correct0
+			j	Else0
 			
 			correct0:
 			move	$a0, $t6
@@ -119,7 +120,8 @@ TempPrint: # showing the cards choosen, if they don't match
 			mul	$s7, $t6, 4
 			
 			beq 	$s6, $t6, correct1
-			bne 	$s7, $t6, Else1
+			beq 	$s7, $t6, correct1
+			j	Else1
 			
 			correct1:
 			addi	$t6, $t6, 16
@@ -163,7 +165,8 @@ TempPrint: # showing the cards choosen, if they don't match
 			mul	$s7, $t6, 4
 			
 			beq 	$s6, $t6, correct2
-			bne 	$s7, $t6, Else2
+			beq 	$s7, $t6, correct2
+			j	Else2
 			
 			correct2:
 			addi	$t6, $t6, 32
@@ -207,7 +210,8 @@ TempPrint: # showing the cards choosen, if they don't match
 			mul	$s7, $t6, 4
 			
 			beq 	$s6, $t6, correct3
-			bne 	$s7, $t6, Else3
+			beq 	$s7, $t6, correct3
+			j	Else3
 			
 			correct3:
 			addi	$t6, $t6, 48
