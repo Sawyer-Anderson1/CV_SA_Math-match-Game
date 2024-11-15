@@ -29,6 +29,7 @@ main:
 	
 	# call the randomizor
 	
+	
 Prompt: # reprompting for the input
 	jal	currBoard
 	
@@ -60,8 +61,6 @@ Prompt: # reprompting for the input
 	move	$t0, $v0
 	sw	$t0, secondCard+4
 	
-	j	cardCheck
-	
 cardCheck:	
 	# t0: the firstCard (the row index)
 	# t1: the column index for the first card
@@ -86,14 +85,6 @@ cardCheck:
 	
 	jal	locationCheck # jumping to the subroutine
 	move	$s1, $v0
-
-	#the arguements for both MatchPrint and TempPrint	
-		#card 1
-	move	$a0, $t0
-	move	$a1, $t1
-		#card 2
-	move 	$a2, $t2
-	move	$a3, $t3
 		
 	#the if statement condition
 	bne	$s2, $s1, Else
@@ -105,12 +96,34 @@ cardCheck:
 		#the exit condition
 		beq	$s0, -1, Exit # when all the cards have been matched a flipped
 		
-		j 	MatchPrint
+		lw	$t0, firstCard
+		lw	$t1, firstCard+4 #the column index for the first card
+		move	$a0, $t0 # the arugment for the subroutine call
+		move	$a1, $t1 # the second 
+		
+		lw	$t2, secondCard
+		lw	$t3, secondCard+4 #the column index for the second card
+		move	$a2, $t2
+		move	$a3, $t3
+		
+		jal 	MatchPrint
+		
+		j 	Prompt
 	Else:
 		li	$a0, 0 # 0 for not matching
 		
-		j	TempPrint
-	
+		lw	$t0, firstCard
+		lw	$t1, firstCard+4 #the column index for the first card
+		move	$a0, $t0 # the arugment for the subroutine call
+		move	$a1, $t1 # the second 
+		
+		lw	$t2, secondCard
+		lw	$t3, secondCard+4 #the column index for the second card
+		move	$a2, $t2
+		move	$a3, $t3
+		
+		jal	TempPrint
+		j	Prompt
 Exit: 
 	li	$v0, 10
 	syscall
