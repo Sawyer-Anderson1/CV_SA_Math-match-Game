@@ -67,22 +67,32 @@ TempPrint: # showing the cards choosen, if they don't match
 		# check for permanent 
 		beq	$t5, 1, correct0
 		# check for temp cards to be flipped
-		beq	$t3, 0, If0
-		beq	$a2, 0, If0
+		beq	$t3, 0, c2_0
+		beq	$a2, 0, c1_0
 		j	Else0
-		If0:	
+		
+		c2_0:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
-			mul 	$s6, $t6, 4
-			mul	$s7, $t6, 4
-			
-			beq 	$s6, $t6, correct0
+			mul	$s7, $a3, 4
+			# edit the column number of cards 1 and 2 for the word offset/indexing
 			beq 	$s7, $t6, correct0
-			j	Else0
+			j	If0
 			
-			correct0:
+		If0:	
+			bne	$a2, 0, Else0
+			
+			c1_0:
+				# edit the column number of cards 1 and 2 for the word offset/indexing
+				mul 	$s6, $a1, 4
+				
+				beq 	$s6, $t6, correct0
+				j	Else0
+			
+		correct0:
 			move	$a0, $t6
 			jal	flippedCardPrint
 			j	End_if0
+		
 		Else0: 
 			la	$a0, space
     			syscall
@@ -112,23 +122,32 @@ TempPrint: # showing the cards choosen, if they don't match
 		# check for permanent 
 		beq	$t5, 1, correct1
 		# check for temp cards to be flipped
-		beq	$t3, 1, If1
-		beq	$a2, 1, If1
+		beq	$t3, 1, c2_1
+		beq	$a2, 1, c1_1
 		j	Else1
-		If1:
+		
+		c2_1:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
-			mul 	$s6, $t6, 4
-			mul	$s7, $t6, 4
-			
-			beq 	$s6, $t6, correct1
+			mul	$s7, $a3, 4
+			# edit the column number of cards 1 and 2 for the word offset/indexing
 			beq 	$s7, $t6, correct1
-			j	Else1
+			j	If1
 			
-			correct1:
-			addi	$t6, $t6, 16
+		If1:	
+			bne	$a2, 1, Else1
+			
+			c1_1:
+				# edit the column number of cards 1 and 2 for the word offset/indexing
+				mul 	$s6, $a1, 4
+				
+				beq 	$s6, $t6, correct1
+				j	Else1
+			
+		correct1:
 			move	$a0, $t6
 			jal	flippedCardPrint
 			j	End_if1
+		
 		Else1: 
 			la	$a0, space
     			syscall
@@ -158,23 +177,32 @@ TempPrint: # showing the cards choosen, if they don't match
 		# check for permanent 
 		beq	$t5, 1, correct2
 		# check for temp cards to be flipped
-		beq	$t3, 2, If2
-		beq	$a2, 2, If2
+		beq	$t3, 2, c2_2
+		beq	$a2, 2, c1_2
 		j	Else2
-		If2:
+		
+		c2_2:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
-			mul 	$s6, $t6, 4
-			mul	$s7, $t6, 4
-			
-			beq 	$s6, $t6, correct2
+			mul	$s7, $a3, 4
+			# edit the column number of cards 1 and 2 for the word offset/indexing
 			beq 	$s7, $t6, correct2
-			j	Else2
+			j	If2
 			
-			correct2:
-			addi	$t6, $t6, 32
+		If2:	
+			bne	$a2, 2, Else2
+			
+			c1_2:
+				# edit the column number of cards 1 and 2 for the word offset/indexing
+				mul 	$s6, $a1, 4
+				
+				beq 	$s6, $t6, correct2
+				j	Else2
+			
+		correct2:
 			move	$a0, $t6
 			jal	flippedCardPrint
 			j	End_if2
+		
 		Else2: 
 			la	$a0, space
     			syscall
@@ -204,23 +232,32 @@ TempPrint: # showing the cards choosen, if they don't match
 		# check for permanent 
 		beq	$t5, 1, correct3
 		# check for temp cards to be flipped
-		beq	$t3, 3, If3
-		beq	$a2, 3, If3
-		j	Else3
-		If3:
+		beq	$t3, 3, c2_3
+		beq	$a2, 3, c1_3
+		j	Else0
+		
+		c2_3:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
-			mul 	$s6, $t6, 4
-			mul	$s7, $t6, 4
-			
-			beq 	$s6, $t6, correct3
+			mul	$s7, $a3, 4
+			# edit the column number of cards 1 and 2 for the word offset/indexing
 			beq 	$s7, $t6, correct3
-			j	Else3
+			j	If3
 			
-			correct3:
-			addi	$t6, $t6, 48
+		If3:	
+			bne	$a2, 3, Else3
+			
+			c1_3:
+				# edit the column number of cards 1 and 2 for the word offset/indexing
+				mul 	$s6, $a1, 4
+				
+				beq 	$s6, $t6, correct3
+				j	Else3
+			
+		correct3:
 			move	$a0, $t6
 			jal	flippedCardPrint
 			j	End_if3
+		
 		Else3: 
 			la	$a0, space
     			syscall
