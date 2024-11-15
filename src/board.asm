@@ -82,6 +82,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			# then check the row number for card 2
 			# sense it wouldn't have beeen check in the branch to c1_0
 			beq	$a2, 0, c2_0
+			j	Else0
 			
 		c2_0:
 			# edit the column number of card 2 for the word offset/indexing
@@ -140,6 +141,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			# then check the row number for card 2
 			# sense it wouldn't have beeen check in the branch to c1_0
 			beq	$a2, 1, c2_1
+			j	Else1
 			
 		c2_1:
 			# edit the column number of card 2 for the word offset/indexing
@@ -199,6 +201,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			# then check the row number for card 2
 			# sense it wouldn't have beeen check in the branch to c1_0
 			beq	$a2, 2, c2_2
+			j	Else2
 			
 		c2_2:
 			# edit the column number of card 2 for the word offset/indexing
@@ -258,6 +261,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			# then check the row number for card 2
 			# sense it wouldn't have beeen check in the branch to c1_0
 			beq	$a2, 3, c2_3
+			j	Else3
 			
 		c2_3:
 			# edit the column number of card 2 for the word offset/indexing
