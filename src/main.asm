@@ -32,7 +32,7 @@ main:
 	
 Prompt: # reprompting for the input
 	#the exit condition
-	beq	$s0, -1, Exit # when all the cards have been matched a flipped
+	beq	$s0, 0, Exit # when all the cards have been matched a flipped
 		
 	jal	currBoard
 	
