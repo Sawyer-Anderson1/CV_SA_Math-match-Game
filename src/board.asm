@@ -64,11 +64,11 @@ TempPrint: # showing the cards choosen, if they don't match
 		add	$t4, $s5, $t6
 		lw	$t5, 0($t4)
 		
+		# check for permanent 
+		beq	$t5, 1, correct0
 		# check for temp cards to be flipped
 		beq	$t3, 0, If0
 		beq	$a2, 0, If0
-		# check for permanent 
-		beq	$t5, 1, correct0
 		j	Else0
 		If0:	
 			# edit the column number of cards 1 and 2 for the word offset/indexing
@@ -109,10 +109,11 @@ TempPrint: # showing the cards choosen, if they don't match
 		add	$t4, $s5, $t6
 		lw	$t5, 0($t4)
 		
+		# check for permanent 
+		beq	$t5, 1, correct1
 		# check for temp cards to be flipped
 		beq	$t3, 1, If1
 		beq	$a2, 1, If1
-		beq	$t5, 1, correct1
 		j	Else1
 		If1:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
@@ -154,10 +155,11 @@ TempPrint: # showing the cards choosen, if they don't match
 		add	$t4, $s5, $t6
 		lw	$t5, 0($t4)
 		
+		# check for permanent 
+		beq	$t5, 1, correct2
 		# check for temp cards to be flipped
 		beq	$t3, 2, If2
 		beq	$a2, 2, If2
-		beq	$t5, 1, correct2
 		j	Else2
 		If2:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
@@ -199,10 +201,11 @@ TempPrint: # showing the cards choosen, if they don't match
 		add	$t4, $s5, $t6
 		lw	$t5, 0($t4)
 		
+		# check for permanent 
+		beq	$t5, 1, correct3
 		# check for temp cards to be flipped
 		beq	$t3, 3, If3
 		beq	$a2, 3, If3
-		beq	$t5, 1, correct3
 		j	Else3
 		If3:
 			# edit the column number of cards 1 and 2 for the word offset/indexing
