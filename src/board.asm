@@ -11,13 +11,14 @@
 		.data
 
 matchIndicator: .asciiz "Match!\n"
-columnHeader: 	.asciiz "_| 0  1  2  3\n\0"
+columnHeader: 	.asciiz "_|  0   1   2   3\n\0"
+space: 		.asciiz " "
 row0: 		.asciiz "0|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row1:		.asciiz "1|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row2:		.asciiz "2|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 
-cardDisArr: 	.asciiz " 4 ", "2x2", " 6 ", "2x3", " 8 ", "2x4", " 9 ", "3x3", "10 ", "2x5", "12 ", "3x4", "15 ", "3x5", "16 ", "4x4"
+cardDisArr: 	.asciiz " 4 ", "2x2", " 6 ", "2x3", " 8 ", "2x4", " 9 ", "3x3", " 10", "2x5", " 12", "3x4", " 15", "3x5", " 16", "4x4"
 flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
 #		      0  4  8  12 16 20 24 28 32 36 40 44 48 52 56 60
 #------------------
@@ -147,6 +148,8 @@ MatchPrint: # permanantly change the board
 
 currBoard:
 	li	$v0, 4
+	la	$a0, space
+    	syscall
 	la	$a0, columnHeader
 	syscall
 	
@@ -154,7 +157,7 @@ currBoard:
 	move	$s2, $ra
 	
 	la	$t3, flippedCards
-	
+    			
 	la	$t1, row0
 	li	$t0, 0
 	
@@ -175,6 +178,8 @@ currBoard:
 			jal	flippedCardPrint
 			j	end_if0
 		else0: 
+			la	$a0, space
+    			syscall
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if0:
@@ -205,6 +210,8 @@ currBoard:
 			jal	flippedCardPrint
 			j	end_if1
 		else1: 
+			la	$a0, space
+    			syscall
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if1:
@@ -235,6 +242,8 @@ currBoard:
 			jal	flippedCardPrint
 			j	end_if2
 		else2: 
+			la	$a0, space
+    			syscall
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if2:
@@ -265,6 +274,8 @@ currBoard:
 			jal	flippedCardPrint
 			j	end_if3
 		else3: 
+			la	$a0, space
+    			syscall
 			la 	$a0, 0($t2)      # Load address of each cell in row0   
     			syscall              # Print the cell content
     		end_if3:     
@@ -288,6 +299,9 @@ flippedCardPrint:
 	# display the value at that position
 	li	$v0, 4
 	la	$a0, 0($s1)
+	syscall
+	
+	la	$a0, space
 	syscall
 	
 	jr	$ra
