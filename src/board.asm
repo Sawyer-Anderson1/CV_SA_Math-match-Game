@@ -11,18 +11,13 @@
 		.data
 
 matchIndicator: .asciiz "Match!\n"
-columnHeader: 	.asciiz "_| 0  1  2  3\n"
+columnHeader: 	.asciiz "_| 0  1  2  3\n\0"
 row0: 		.asciiz "0|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row1:		.asciiz "1|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row2:		.asciiz "2|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 
-# displayCardsR0:	.asciiz "3", "1x1", "1x2", "2x2"
-# displayCardsR1:	.asciiz "1", "2", "1x3", "1x5"
-# displayCardsR2:	.asciiz "4", "6", "5", "1x7"
-# displayCardsR3:	.asciiz "4x2", "8", "7", "3x2" 
-
-cardDisArr: 	.asciiz " 4 ","2x2"," 6 ","2x3"," 8 ","2x4", " 9 ", "3x3 ","10 ","2x5","12 ","3x4","15 ","3x5","16 ","4x4"
+cardDisArr: 	.asciiz " 4 ", "2x2", " 6 ", "2x3", " 8 ", "2x4", " 9 ", "3x3", "10 ", "2x5", "12 ", "3x4", "15 ", "3x5", "16 ", "4x4"
 flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
 #		      0  4  8  12 16 20 24 28 32 36 40 44 48 52 56 60
 #------------------
@@ -30,7 +25,7 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #------------------
 
 .text
-.globl TempPrint, MatchPrint, EndCard2, currBoard, flippedCardPrint
+.globl TempPrint, MatchPrint, currBoard
 
 # Registers for TempPrint/MatchPrint:
 #	a0: the firstCard (the row index)
@@ -56,19 +51,19 @@ MatchPrint: # permanantly change the board
 	# that indicates where the card value is to be shown
 	
 	# move $a0 to a register, to keep the debugging matchIndicator
-	move	$t3, $a0
+	# move	$t3, $a0
 	
 	# for debugging
-	li	$v0, 4
-	la	$a0, matchIndicator
-	syscall	
+	# li	$v0, 4
+	# la	$a0, matchIndicator
+	# syscall	
 	
 	# to get the position for card 1 in the flipped card array
 	Card1:
-	beq	$t3, 0, R0
-	beq	$t3, 1, R1
-	beq	$t3, 2, R2
-	beq    	$t3, 3, R3
+	beq	$a0, 0, R0
+	beq	$a0, 1, R1
+	beq	$a0, 2, R2
+	beq    	$a0, 3, R3
 	
 	R0:	
 		la	$t0, flippedCards
@@ -155,8 +150,8 @@ currBoard:
 	la	$a0, columnHeader
 	syscall
 	
-	# saving $ra into $s0
-	move	$s0, $ra
+	# saving $ra into $s2
+	move	$s2, $ra
 	
 	la	$t3, flippedCards
 	
@@ -275,15 +270,15 @@ currBoard:
     		end_if3:     
   			addi 	$t0, $t0, 4
 		
-		blt	$t0, 24, row3Loop
+	blt	$t0, 24, row3Loop
 	
 	# move saved $ra value into $ra again
-	move 	$ra, $s0
+	move 	$ra, $s2
 	jr	$ra
 	
 # Registers:
 #	$a0: the adjusted index position
-#	$t0: the base address of the card display array (cardDisArr)
+#	$s1: the base address of the card display array (cardDisArr)
 
 flippedCardPrint:
 	la	$t7, cardDisArr
