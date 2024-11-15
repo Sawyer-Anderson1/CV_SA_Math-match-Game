@@ -13,12 +13,13 @@
 matchIndicator: .asciiz "Match!\n"
 columnHeader: 	.asciiz "_|  0   1   2   3\n\0"
 space: 		.asciiz " "
+newLine: 	.asciiz "\n"
 row0: 		.asciiz "0|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row1:		.asciiz "1|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row2:		.asciiz "2|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 row3:		.asciiz "3|\0", " + ", " + ", " + ", " + ", "\n\0\0"
 
-cardDisArr: 	.asciiz " 4 ", "2x2", " 6 ", "2x3", " 8 ", "2x4", " 9 ", "3x3", " 10", "2x5", " 12", "3x4", " 15", "3x5", " 16", "4x4"
+cardDisArr: 	.asciiz "  4", "2x2", "  6", "2x3", "  8", "2x4", "  9", "3x3", " 10", "2x5", " 12", "3x4", " 15", "3x5", " 16", "4x4"
 flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indicates that the card isn't permanently flipped, 1 does
 #		      0  4  8  12 16 20 24 28 32 36 40 44 48 52 56 60
 #------------------
@@ -35,10 +36,204 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #	a3: the column index for the second card
 
 TempPrint: # showing the cards choosen, if they don't match
+	# move the first argument to another register
+	move 	$t3, $a0
+	
+	# save the return address
+	move	$s2, $ra
+	
+	li	$v0, 4
+	la	$a0, space
+    	syscall
+	la	$a0, columnHeader
+	syscall
+	
+	la	$s5, flippedCards
+	
+	la	$t1, row0
+	li	$t0, 0
+	
+	Row0Loop:
+		add	$t2, $t1, $t0
+		
+		beq	$t0, 0, Else0
+		beq	$t0, 20, Else0
+		
+		# to change the index to account for the offest of the row ascii array (the row labels)
+		subi	$t6, $t0, 4
+		add	$t4, $s5, $t6
+		lw	$t5, 0($t4)
+		
+		# check for temp cards to be flipped
+		beq	$t3, 0, If0
+		beq	$a2, 0, If0
+		# check for permanent 
+		beq	$t5, 1, correct0
+		j	Else0
+		If0:	
+			# edit the column number of cards 1 and 2 for the word offset/indexing
+			mul 	$s6, $t6, 4
+			mul	$s7, $t6, 4
+			
+			beq 	$s6, $t6, correct0
+			bne 	$s7, $t6, Else0
+			
+			correct0:
+			move	$a0, $t6
+			jal	flippedCardPrint
+			j	End_if0
+		Else0: 
+			la	$a0, space
+    			syscall
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		End_if0:
+    			addi 	$t0, $t0, 4
+    		
+    	blt $t0, 24, Row0Loop # Print all 5 elements in row
+	
+	la	$s5, flippedCards+16
+	
+	la	$t1, row1
+	li	$t0, 0
+	
+	Row1Loop:
+		add	$t2, $t1, $t0
+		
+		beq	$t0, 0, Else1
+		beq	$t0, 20, Else1
+		
+		# to change the index to account for the offest of the row ascii array (the row labels)
+		subi	$t6, $t0, 4
+		add	$t4, $s5, $t6
+		lw	$t5, 0($t4)
+		
+		# check for temp cards to be flipped
+		beq	$t3, 1, If1
+		beq	$a2, 1, If1
+		beq	$t5, 1, correct1
+		j	Else1
+		If1:
+			# edit the column number of cards 1 and 2 for the word offset/indexing
+			mul 	$s6, $t6, 4
+			mul	$s7, $t6, 4
+			
+			beq 	$s6, $t6, correct1
+			bne 	$s7, $t6, Else1
+			
+			correct1:
+			addi	$t6, $t6, 16
+			move	$a0, $t6
+			jal	flippedCardPrint
+			j	End_if1
+		Else1: 
+			la	$a0, space
+    			syscall
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		End_if1:
+  			addi 	$t0, $t0, 4
+		
+	blt	$t0, 24, Row1Loop
+	
+	la	$s5, flippedCards+32
+	
+	la	$t1, row2
+	li	$t0, 0
+	
+	Row2Loop:
+		add	$t2, $t1, $t0
+		
+		beq	$t0, 0, Else2
+		beq	$t0, 20, Else2
+		
+		# to change the index to account for the offest of the row ascii array (the row labels)
+		subi	$t6, $t0, 4
+		add	$t4, $s5, $t6
+		lw	$t5, 0($t4)
+		
+		# check for temp cards to be flipped
+		beq	$t3, 2, If2
+		beq	$a2, 2, If2
+		beq	$t5, 1, correct2
+		j	Else2
+		If2:
+			# edit the column number of cards 1 and 2 for the word offset/indexing
+			mul 	$s6, $t6, 4
+			mul	$s7, $t6, 4
+			
+			beq 	$s6, $t6, correct2
+			bne 	$s7, $t6, Else2
+			
+			correct2:
+			addi	$t6, $t6, 32
+			move	$a0, $t6
+			jal	flippedCardPrint
+			j	End_if2
+		Else2: 
+			la	$a0, space
+    			syscall
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		End_if2:
+  			addi 	$t0, $t0, 4
+		
+	blt	$t0, 24, Row2Loop
+	
+	la	$s5, flippedCards+48
+	
+	la	$t1, row3
+	li	$t0, 0
+	
+	Row3Loop:
+		add	$t2, $t1, $t0
+		
+		beq	$t0, 0, Else3
+		beq	$t0, 20, Else3
+		
+		# to change the index to account for the offest of the row ascii array (the row labels)
+		subi	$t6, $t0, 4
+		add	$t4, $s5, $t6
+		lw	$t5, 0($t4)
+		
+		# check for temp cards to be flipped
+		beq	$t3, 3, If3
+		beq	$a2, 3, If3
+		beq	$t5, 1, correct3
+		j	Else3
+		If3:
+			# edit the column number of cards 1 and 2 for the word offset/indexing
+			mul 	$s6, $t6, 4
+			mul	$s7, $t6, 4
+			
+			beq 	$s6, $t6, correct3
+			bne 	$s7, $t6, Else3
+			
+			correct3:
+			addi	$t6, $t6, 48
+			move	$a0, $t6
+			jal	flippedCardPrint
+			j	End_if3
+		Else3: 
+			la	$a0, space
+    			syscall
+			la 	$a0, 0($t2)      # Load address of each cell in row0   
+    			syscall              # Print the cell content
+    		End_if3:     
+  			addi 	$t0, $t0, 4
+		
+	blt	$t0, 24, Row3Loop
+	
+	# move saved $ra value into $ra again
+	move 	$ra, $s2
 	
 	# to show the incorrect cards for a bit before flipping them back
-	la	$a0, 1
+	la	$a0, 5
 	li	$v0, 32
+	syscall
+	
+	li	$v0, 4
+	la	$a0, newLine
 	syscall
 	
 	jr	$ra
