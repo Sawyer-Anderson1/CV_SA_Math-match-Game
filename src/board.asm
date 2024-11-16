@@ -29,11 +29,21 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 .text
 .globl TempPrint, MatchPrint, currBoard
 
-# Registers for TempPrint/MatchPrint:
+# Registers for TempPrint:
 #	a0: the firstCard (the row index)
 # 	a1: the column index for the first card
 # 	a2: the secondCard (the row index)
 #	a3: the column index for the second card
+#	t3: the register that saves the row index firstCard value (since a0 is used from outputting strings)
+#	s2: used to save the return address (since ra is overwritten in the calls of other subroutines within TempPrint)
+#	t1: holds the base address of the row arrays of the board
+#	t0: the value of the iterator
+#	s5: the base address of the flippedCards/flag array for a specific row
+#	t2: the address of the value for the row0-3 board array at a index t0
+#	t6: adjusted value of t0 to exclude the unchanging parts of the board (the row label and newline),
+#		to get the index for the flippedCards flag array and the cardDisArr 
+#	t4: the addres of the value for flippedCards
+#	t5: the value of the flipppedCards flag array at index t4
 
 TempPrint: # showing the cards choosen, if they don't match
 	# move the first argument to another register
