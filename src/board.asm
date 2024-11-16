@@ -44,6 +44,7 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #		to get the index for the flippedCards flag array and the cardDisArr 
 #	t4: the addres of the value for flippedCards
 #	t5: the value of the flipppedCards flag array at index t4
+#	s6 & s7: the adjusted column value for card 1 & 2
 
 TempPrint: # showing the cards choosen, if they don't match
 	# move the first argument to another register
@@ -311,9 +312,14 @@ TempPrint: # showing the cards choosen, if they don't match
 	
 	jr	$ra
 	
-# Registers for just MatchPrint:
-#	t0: the flipped cards array address space
-#	t1: register to hold an immediate (1) for the flipped cards array
+# Registers for MatchPrint:
+#	a0: the firstCard (the row index)
+# 	a1: the column index for the first card
+# 	a2: the secondCard (the row index)
+#	a3: the column index for the second card
+#	t1: the column value adjusted for word
+#		 / later changed to 1 which is stored at a specific position in flippedCards
+#	t0: the base address for flippedCards array at specific row
 
 MatchPrint: # permanantly change the board
 	# this doesn't actually change the values in rows 0-3 but instead changes the flipped cards array
