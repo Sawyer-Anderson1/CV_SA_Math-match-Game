@@ -182,4 +182,6 @@ DataRand:
     		#j print_loop
 
 Exit:
-    jr $s2
+	move	$v0, $s2
+	
+    	jr $ra
