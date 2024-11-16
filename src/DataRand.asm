@@ -2,7 +2,7 @@
 # Program File: DataRand.asm
 # Written by: Sawyer Anderson and Carlos Vazquez
 # Date Created: 9/12/2024
-# Description: The file that randomizes the indexes
+# Description: The file that randomizes the indices
 #--------------------------------------------------
 # Registers:
 #	$t0: 16, the arraysize for the arrays
@@ -78,76 +78,76 @@ newIndArr: 	.word 		# Array to keep the new randomly shuffled indices
 .globl DataRand
 DataRand:
 	# Load array size
- 	li   $t0, 16         		# Load array size into $t0 (array length)
-    	addi $t1, $t0, -1           	# $t1 = 15, the last index in the array. Done to decrement to the first index
+ 	li   	$t0, 16         		# Load array size into $t0 (array length)
+    	addi 	$t1, $t0, -1           	# $t1 = 15, the last index in the array. Done to decrement to the first index
 
-	lw  
+
     	# Set up base addresses
-    	la $s0, cardDisArr		# $s0, Base address of cardDisArr
-    	la $s1, cardValArr		# $t3, Base address of cardValArr
-    	la $s2, newIndArr		# $s2, Base address of newIndArr
-    	la $s3, flagArr			# $s3, Base address of flagArr
+    	la 	$s0, cardDisArr		# $s0, Base address of cardDisArr
+    	la 	$s1, cardValArr		# $t3, Base address of cardValArr
+    	la 	$s2, newIndArr		# $s2, Base address of newIndArr
+    	la 	$s3, flagArr			# $s3, Base address of flagArr
 
 		
 	# Initialize random seed (simple example, usually based on a timer or other source)
-   	li $v0, 40                # Set $v0 to 40 for syscall to set seed
-    	li $a1, 1                 # Seed value (could be any number)
+   	li 	$v0, 40                # Set $v0 to 40 for syscall to set seed
+    	li 	$a1, 1                 # Seed value (could be any number)
     	syscall
     	
 	shuffle_loop:
     		# Check if the loop counter ($t1) is below 0
-    		bltz $t1, print_arrays      # If $t1 < 0, go to print arrays,	$t1 = the current rightmost index
+    		bltz 	$t1, print_arrays      # If $t1 < 0, go to print arrays,	$t1 = the current rightmost index
     		
     		# Generate a random index within bounds (0 to $t1)
     		#li $a1, 16		# Set upper bound for random index
-    		addi $a1, $zero, 16
-		li $v0, 42             	# Syscall for generating random integer
+    		addi 	$a1, $zero, 16
+		li 	$v0, 42             	# Syscall for generating random integer
     		syscall
 		#move $t2 $a0		# $t2, the random integer 0 - 15
-		rem $t2, $a0, 16
+		rem 	$t2, $a0, 16
 		
     		# Print random number			To view generated random numbers 
-    		move $a0, $t2
-		li $v0, 1
+    		move 	$a0, $t2
+		li 	$v0, 1
 		syscall
     		
     		# Print newline
-    		la $a0, newLine
-		li $v0, 4
+    		la 	$a0, newLine
+		li 	$v0, 4
 		syscall
 		
-    		mul $t3, $t2, 4		# $t3 = Offset for Random Index for arrays
+    		mul 	$t3, $t2, 4		# $t3 = Offset for Random Index for arrays
     		
     		# Calculate Memory positions
-		add $t6, $s2, $t3	# Memory position for newIndArr[$t2], random index address in newIndArr to store
-		add $s7, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
+		add 	$t6, $s2, $t3	# Memory position for newIndArr[$t2], random index address in newIndArr to store
+		add 	$s7, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
 		
 		# Check if Memory position for newIndArr[$t2] is available to store in
-		lw $t7, ($s7)		# $t7, the random number to flag check
-		bnez $t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
+		lw 	$t7, ($s7)		# $t7, the random number to flag check
+		bnez 	$t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
 		
-		sw $t2, ($s7)			# Flag random element if so
-		sw $t1, 0($t6)			# Store $t1 into $t6, store current righmost element in newIndArr[$t2], a random index in newIndArr
+		sw 	$t2, ($s7)			# Flag random element if so
+		sw 	$t1, 0($t6)			# Store $t1 into $t6, store current righmost element in newIndArr[$t2], a random index in newIndArr
 
     		# Decrement loop counter and continue
-    		addi $t1, $t1, -1	# Decrement the rightmost index, if a available random position was found 
+    		addi 	$t1, $t1, -1	# Decrement the rightmost index, if a available random position was found 
     		
     		redo:		# Label to skip if random index is the same as previous flagged indices  
-    		j shuffle_loop
+    		j 	shuffle_loop
     	
 	print_arrays:
     	# Reset array size and load for print loop
     	
     	# Print newline					New line added to seperate the Random numbers and the Array numbers
-    	la $a0, newLine
-	li $v0, 4
+    	la 	$a0, newLine
+	li 	$v0, 4
 	syscall
     		
-    	li $t1, 0                   # Initialize index counter to 0
+    	li 	$t1, 0                   # Initialize index counter to 0
 
 	print_loop:
     		# Check if we are done printing
-    		#beq $t1, 16, Exit          # If index == array size, go to exit
+    		#beq 	$t1, 16, Exit          # If index == array size, go to exit
     		
 		# Calculate memory positions for printing card description and value
 		#mul 	$t2, $t1, 4             # Calculate offset for new index array
@@ -158,30 +158,30 @@ DataRand:
     		#add	$t5, $s1, $t2		# Memory position for cardValArr[$t1]
     		
 		# Print card description (string) at cardDisArr[$t1]
-		#lw $a0, 0($t4)              	# Load the string, pointer implementation
-		#li $v0, 4                   	# Syscall for printing a string
+		#lw 	$a0, 0($t4)              	# Load the string, pointer implementation
+		#li 	$v0, 4                   	# Syscall for printing a string
 		#syscall
 		
 		# Print whitespace
-    		#la $a0, space 
-		#li $v0, 4
+    		#la 	$a0, space 
+		#li 	$v0, 4
 		#syscall
 
     		# Print corresponding value in cardValArr[$t1]
-    		#lw $a0, 0($t5)              # Load integer value at cardValArr[$t1]
-    		#li $v0, 1                   # Syscall for printing an integer
+    		#lw 	$a0, 0($t5)              # Load integer value at cardValArr[$t1]
+    		#li 	$v0, 1                   # Syscall for printing an integer
 		#syscall
 
     		# Print newline
-    		#la $a0, newLine
-		#li $v0, 4
+    		#la 	$a0, newLine
+		#li 	$v0, 4
 		#syscall
     
     		# Increment index and repeat
-    		#addi $t1, $t1, 1
-    		#j print_loop
+    		#addi 	$t1, $t1, 1
+    		#j 	print_loop
 
 Exit:
 	move	$v0, $s2
 	
-    	jr $ra
+    	jr	$ra
