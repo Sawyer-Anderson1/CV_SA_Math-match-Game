@@ -412,13 +412,16 @@ MatchPrint: # permanantly change the board
 	
 	jr	$ra
 	
-# Registers for boardUpdate:
-#	$t1 for the row formats
-#	$t0 for the iterator counters
-#	$t2 for the address of value(s)
-# 	$t3 for the flipped cards flag array
-#	$t4 for the flipped card address
-#	$t5 for the flipped card value
+# Registers for currBoard:
+#	s2: used to save the return address (since ra is overwritten in the calls of other subroutines within TempPrint)
+#	t3: the base address for flippedCards array for a specific row
+#	t1: holds the base address of the row arrays of the board
+#	t0: the value of the iterator
+#	t2: the address of the value for the row0-3 board array at a index t0
+#	t6: adjusted value of t0 to exclude the unchanging parts of the board (the row label and newline),
+#		to get the index for the flippedCards flag array and the cardDisArr 
+#	t4: the addres of the value for flippedCards
+#	t5: the value of the flipppedCards flag array at index t4
 
 currBoard:
 	li	$v0, 4
@@ -562,8 +565,9 @@ currBoard:
 	jr	$ra
 	
 # Registers:
-#	$a0: the adjusted index position
-#	$s1: the base address of the card display array (cardDisArr)
+#	a0: the pre-adjusted index value
+#	t7: the base address of the card display array (cardDisArr)
+#	s1: the address of the cardDisArr value at index position
 
 flippedCardPrint:
 	la	$t7, cardDisArr
