@@ -2,7 +2,7 @@
 # Program File: locationCheck.asm
 # Written by: Sawyer Anderson and Carlos Vazquez
 # Date Created: 11/5/2024
-# Description: The file that controls the board
+# Description: The file that returns actual value for a specific card
 #-----------------------------------------------------------
 		.data
 
