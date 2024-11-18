@@ -38,7 +38,8 @@ locationCheck: # checks and goes to location in the array
 		add	$t0, $t1, $t0
 		lw 	$t0, ($t0)
 		mul	$t0, $t0, 4
-		la 	$t0, cardValArr($t0)
+		la	$t1, cardValArr
+		add	$t0, $t0, $t1
 		
 		j	Return
 		
@@ -50,7 +51,8 @@ locationCheck: # checks and goes to location in the array
 		add	$t0, $t1, $t0
 		lw 	$t0, ($t0)
 		mul	$t0, $t0, 4
-		la 	$t0, cardValArr($t0)
+		la	$t1, cardValArr
+		add	$t0, $t0, $t1
 		
 		j	Return
 		
@@ -62,7 +64,8 @@ locationCheck: # checks and goes to location in the array
 		add	$t0, $t1, $t0
 		lw 	$t0, ($t0)
 		mul	$t0, $t0, 4
-		la 	$t0, cardValArr($t0)
+		la	$t1, cardValArr
+		add	$t0, $t0, $t1
 		
 		j	Return
 		
@@ -74,7 +77,8 @@ locationCheck: # checks and goes to location in the array
 		add	$t0, $t1, $t0
 		lw 	$t0, ($t0)
 		mul	$t0, $t0, 4
-		la 	$t0, cardValArr($t0)
+		la	$t1, cardValArr
+		add	$t0, $t0, $t1
 		
 		j	Return
 		
