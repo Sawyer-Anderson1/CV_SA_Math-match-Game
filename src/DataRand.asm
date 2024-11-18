@@ -27,8 +27,9 @@
      .data
 #indexArr:	.word 0, 1, 2, 3, 4, 5, 6, 7,  8,  9, 10, 11, 12, 13, 14, 15	
 
-flagArr: 	.word 		# Array to keep track of randomized indices
-newIndArr: 	.word 		# Array to keep the new randomly shuffled indices
+newLine:	.asciiz "\n"
+flagArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to keep track of randomized indices
+newIndArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to keep the new randomly shuffled indices
 
 #------------------
 # Main program body
@@ -80,7 +81,7 @@ DataRand:
 		add 	$t8, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
 		
 		# Check if Memory position for newIndArr[$t2] is available to store in
-		lw 	$t7, ($t8)		# $t7, the random number to flag check
+		lw 	$t7, 0($t8)		# $t7, the random number to flag check
 		bnez 	$t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
 		
 		sw 	$t2, ($t8)			# Flag random element if so
