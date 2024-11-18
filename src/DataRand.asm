@@ -25,11 +25,10 @@
 # Declare some constants
 #-----------------------   
      .data
-#indexArr:	.word 0, 1, 2, 3, 4, 5, 6, 7,  8,  9, 10, 11, 12, 13, 14, 15	
-
+     
 newLine:	.asciiz "\n"
-flagArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to keep track of randomized indices
-newIndArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to keep the new randomly shuffled indices
+# flagArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to keep track of randomized indices
+newIndArr: 	.word  0, 1, 2, 3, 4, 5, 6, 7,  8,  9, 10, 11, 12, 13, 14, 15	# Array to keep the new randomly shuffled indices
 
 #------------------
 # Main program body
@@ -37,63 +36,66 @@ newIndArr: 	.word  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	# Array to kee
 .text
 .globl DataRand
 DataRand:
-	# Load array size
- 	li   	$t0, 16         		# Load array size into $t0 (array length)
-    	addi 	$t1, $t0, -1           	# $t1 = 15, the last index in the array. Done to decrement to the first index
-
+    	# Load array size
+    	li    $t0, 16              # Load array size into $t0 (array length)
+    	#addi  $t1, $t0, -1         # $t1 = 15, the last index in the array. Done to decrement to the first index
 
     	# Set up base addresses
-    	la 	$s2, newIndArr		# $s2, Base address of newIndArr
-    	la 	$s3, flagArr			# $s3, Base address of flagArr
+    	la    $t1, newIndArr       # $s2, Base address of newIndArr
+    	#la    $s3, flagArr         # $s3, Base address of flagArr
 
-		
-	# Initialize random seed (simple example, usually based on a timer or other source)
-   	li 	$v0, 40                # Set $v0 to 40 for syscall to set seed
-    	li 	$a1, 1                 # Seed value (could be any number)
-    	syscall
-    	
-	shuffle_loop:
-    		# Check if the loop counter ($t1) is below 0
-    		bltz 	$t1, Exit      # If $t1 < 0, go to print arrays,	$t1 = the current rightmost index
-    		
-    		# Generate a random index within bounds (0 to $t1)
-    		#li $a1, 16		# Set upper bound for random index
-    		addi 	$a1, $zero, 16
-		li 	$v0, 42             	# Syscall for generating random integer
+	# set the seed, to system time
+    	li    $v0, 30           # Syscall for time
+	syscall
+	move  $a0, $a1
+	li    $v0, 40           # Syscall for random seed
+	syscall
+
+
+	shuffleLoop:
+    		subi $t0, $t0, 1      # Decrement i
+    		beqz $t0, Exit # Exit if i == 0
+
+    		# Generate random index j
+   		li $v0, 42           # Syscall: Random
     		syscall
-		#move $t2 $a0		# $t2, the random integer 0 - 15
-		rem 	$t2, $a0, 16
-		
-    		# Print random number			To view generated random numbers 
-    		move 	$a0, $t2
-		li 	$v0, 1
-		syscall
-    		
-    		# Print newline
-    		la 	$a0, newLine
-		li 	$v0, 4
-		syscall
-		
-    		mul 	$t3, $t2, 4		# $t3 = Offset for Random Index for arrays
-    		
-    		# Calculate Memory positions
-		add 	$t6, $s2, $t3	# Memory position for newIndArr[$t2], random index address in newIndArr to store
-		add 	$t8, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
-		
-		# Check if Memory position for newIndArr[$t2] is available to store in
-		lw 	$t7, ($t8)		# $t7, the random number to flag check
-		bnez 	$t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
-		
-		sw 	$t2, ($t8)			# Flag random element if so
-		sw 	$t1, 0($t6)			# Store $t1 into $t6, store current righmost element in newIndArr[$t2], a random index in newIndArr
+    		rem $t2, $a0, $t0    # $t2 = random(0, i)
 
-    		# Decrement loop counter and continue
-    		addi 	$t1, $t1, -1	# Decrement the rightmost index, if a available random position was found 
-    		
-    		redo:		# Label to skip if random index is the same as previous flagged indices  
-    		j 	shuffle_loop
-    	
-Exit:
-	move	$v0, $s2
+    		# Swap array[i] and array[j]
+   	 	mul $t3, $t0, 4      # Calculate offset for array[i]
+    		add $t3, $t1, $t3    # Address of array[i]
+    		lw $t4, 0($t3)       # Load array[i]
+
+    		mul $t5, $t2, 4      # Calculate offset for array[j]
+    		add $t5, $t1, $t5    # Address of array[j]
+    		lw $t6, 0($t5)       # Load array[j]
+
+    		sw $t6, 0($t3)       # array[i] = array[j]
+    		sw $t4, 0($t5)       # array[j] = array[i]
+
+    		j shuffleLoop
 	
-    	jr	$ra
+Exit:
+	li $t0, 16            # Number of cards
+	la $t2, newIndArr
+	
+	printLoop:
+    		beqz $t0, endPrint
+
+    		lw $a0, 0($t2)
+    		li $v0, 1          # Print integer
+    		syscall
+    		
+    		li $v0, 4
+    		la $a0, newLine
+    		syscall
+
+    		addi $t2, $t2, 4   # Move to next position
+    		subi $t0, $t0, 1
+    		j printLoop
+
+	endPrint:
+
+    	
+    	move  $v0, $t1              # Move the base address of newIndArr to $v0 for syscall (if needed)
+    	jr    $ra                   # Return from function
