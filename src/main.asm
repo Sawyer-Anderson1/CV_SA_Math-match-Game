@@ -37,7 +37,9 @@ main:
 Prompt: # reprompting for the input
 	#the exit condition
 	beq	$s0, 0, Exit # when all the cards have been matched a flipped
-		
+	
+	# move the base address of the newIndArr to a0 (the argument)
+	move	$a1, $t4
 	jal	currBoard
 	
 	li	$v0, 4
@@ -131,6 +133,9 @@ cardCheck:
 		lw	$t3, secondCard+4 #the column index for the second card
 		move	$a2, $t2
 		move	$a3, $t3
+		
+		# move the base address of the newIndArr to a0 (the argument)
+		move	$s3, $t4
 		
 		jal	TempPrint
 		j	Prompt
