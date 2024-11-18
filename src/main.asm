@@ -24,11 +24,15 @@ timer:		.word 0
 
 .text
 .globl	main, Prompt
+
+# Notable registers:
+#	t4: holds the returned address of the newIndArr from the randomizor
 main:
 	lw	$s0, amount
 	
 	# call the randomizor
-	
+	jal 	DataRand
+	move	$t4, $v0
 	
 Prompt: # reprompting for the input
 	#the exit condition
@@ -77,6 +81,9 @@ cardCheck:
 	add	$a1, $zero, $t1 # the second 
 	# li	$a2, 0 # the argument that indicates that the operation is loading for first card
 	
+	# moving the base address of the newIndArr to the third argument
+	move	$a2, $t4
+	
 	jal	locationCheck # jumping to the subroutine
 	move	$s2, $v0
 	
@@ -85,6 +92,9 @@ cardCheck:
 	add	$a0, $zero, $t2
 	add	$a1, $zero, $t3
 	#li	$a2, 0 # the value that indicates the second card
+	
+	# moving the base address of the newIndArr to the third argument
+	move	$a2, $t4
 	
 	jal	locationCheck # jumping to the subroutine
 	move	$s1, $v0
