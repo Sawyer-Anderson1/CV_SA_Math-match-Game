@@ -95,7 +95,6 @@ Exit:
     		j printLoop
 
 	endPrint:
-
     	
     	move  $v0, $t1              # Move the base address of newIndArr to $v0 for syscall (if needed)
     	jr    $ra                   # Return from function
