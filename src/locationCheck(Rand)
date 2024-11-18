@@ -6,11 +6,6 @@
 #-----------------------------------------------------------
 		.data
 
-# cardsRow0:	.word 3, 1, 2, 4
-# cardsRow1: 	.word 1, 2, 3, 5
-# cardsRow2:	.word 4, 6, 5, 7
-# cardsRow3:	.word 8, 8, 7, 6
-
 cardValArr: 	.word 4, 4, 6, 6, 8, 8, 9, 9, 10, 10, 12, 12, 15, 15, 16, 16 # Array of card values
 
 .text
