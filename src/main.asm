@@ -135,7 +135,7 @@ cardCheck:
 		move	$a3, $t3
 		
 		# move the base address of the newIndArr to a0 (the argument)
-		move	$s3, $t4
+		addi	$s3, $t4, 0
 		
 		jal	TempPrint
 		j	Prompt
