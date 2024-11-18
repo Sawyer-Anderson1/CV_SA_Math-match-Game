@@ -80,19 +80,19 @@ Exit:
 	la $t2, newIndArr
 	
 	printLoop:
-    		beqz $t0, endPrint
+    		#beqz $t0, endPrint
 
-    		lw $a0, 0($t2)
-    		li $v0, 1          # Print integer
-    		syscall
+    		#lw $a0, 0($t2)
+    		#li $v0, 1          # Print integer
+    		#syscall
     		
-    		li $v0, 4
-    		la $a0, newLine
-    		syscall
+    		#li $v0, 4
+    		#la $a0, newLine
+    		#syscall
 
-    		addi $t2, $t2, 4   # Move to next position
-    		subi $t0, $t0, 1
-    		j printLoop
+    		#addi $t2, $t2, 4   # Move to next position
+    		#subi $t0, $t0, 1
+    		#j printLoop
 
 	endPrint:
     	
