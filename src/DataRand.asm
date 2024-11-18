@@ -16,7 +16,8 @@
 #	$t5: Memory position for cardValArr[$t1]		
 # 	$t6: random index address in newIndArr to store
 #		current index from the new index array
-#	$t7: The random number to flag check		
+#	$t7: The random number to flag check
+#	$t8: The memory address of the random number in flag check
 #
 #	$s0: memory address for cardDisArr
 #	$s1: memory address for cardDisArr
@@ -120,13 +121,13 @@ DataRand:
     		
     		# Calculate Memory positions
 		add 	$t6, $s2, $t3	# Memory position for newIndArr[$t2], random index address in newIndArr to store
-		add 	$s7, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
+		add 	$t8, $s3, $t3	# Memory position for flagArr[$t2],   random index address in newIndArr to prevent wrong storing 
 		
 		# Check if Memory position for newIndArr[$t2] is available to store in
-		lw 	$t7, ($s7)		# $t7, the random number to flag check
+		lw 	$t7, ($t8)		# $t7, the random number to flag check
 		bnez 	$t7, redo		# If the memory position is not available (random number != 0), redo the random number generation
 		
-		sw 	$t2, ($s7)			# Flag random element if so
+		sw 	$t2, ($t8)			# Flag random element if so
 		sw 	$t1, 0($t6)			# Store $t1 into $t6, store current righmost element in newIndArr[$t2], a random index in newIndArr
 
     		# Decrement loop counter and continue
