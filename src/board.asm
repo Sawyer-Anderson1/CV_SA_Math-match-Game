@@ -45,6 +45,8 @@ flippedCards:	.word 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # zero indica
 #	t4: the addres of the value for flippedCards
 #	t5: the value of the flipppedCards flag array at index t4
 #	s6 & s7: the adjusted column value for card 1 & 2
+#
+#	s3: is the base address of newIndArr
 
 TempPrint: # showing the cards choosen, if they don't match
 	# move the first argument to another register
@@ -65,6 +67,8 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row0Loop:
+		addi	$a1, $s3, 0
+		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else0
@@ -124,6 +128,8 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row1Loop:
+		addi	$a1, $s3, 0
+		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else1
@@ -184,6 +190,8 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row2Loop:
+		addi	$a1, $s3, 0
+		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else2
@@ -244,6 +252,8 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row3Loop:
+		addi	$a1, $s3, 0
+		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else3
@@ -573,7 +583,7 @@ currBoard:
 
 flippedCardPrint:
 	add	$s1, $a0, $a1 # to get address of index in newIndArr
-	lw 	$s1, ($s1) # get the index value
+	lw 	$s1, 0($s1) # get the index value
 	mul	$s1, $s1, 4 # adjust it
 		
 	# display the value at that position
