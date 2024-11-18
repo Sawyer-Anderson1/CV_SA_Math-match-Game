@@ -67,8 +67,6 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row0Loop:
-		addi	$a1, $s3, 0
-		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else0
@@ -108,6 +106,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			j	Else0
 			
 		correct0:
+			addi	$a1, $s3, 0
 			move	$a0, $t6
 			jal	flippedCardPrint
 			j	End_if0
@@ -128,8 +127,6 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row1Loop:
-		addi	$a1, $s3, 0
-		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else1
@@ -169,6 +166,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			j	Else1
 			
 		correct1:
+			addi	$a1, $s3, 0
 			addi	$t6, $t6, 16
 			move	$a0, $t6
 			jal	flippedCardPrint
@@ -190,8 +188,6 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row2Loop:
-		addi	$a1, $s3, 0
-		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else2
@@ -231,6 +227,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			j	Else2
 			
 		correct2:
+			addi	$a1, $s3, 0
 			addi	$t6, $t6, 32
 			move	$a0, $t6
 			jal	flippedCardPrint
@@ -252,8 +249,6 @@ TempPrint: # showing the cards choosen, if they don't match
 	li	$t0, 0
 	
 	Row3Loop:
-		addi	$a1, $s3, 0
-		
 		add	$t2, $t1, $t0
 		
 		beq	$t0, 0, Else3
@@ -293,6 +288,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			j	Else3
 			
 		correct3:
+			addi	$a1, $s3, 0
 			addi	$t6, $t6, 48
 			move	$a0, $t6
 			jal	flippedCardPrint
