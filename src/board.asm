@@ -413,6 +413,7 @@ MatchPrint: # permanantly change the board
 	jr	$ra
 	
 # Registers for currBoard:
+#	a1: the base address of newIndArr
 #	s2: used to save the return address (since ra is overwritten in the calls of other subroutines within TempPrint)
 #	t3: the base address for flippedCards array for a specific row
 #	t1: holds the base address of the row arrays of the board
@@ -566,17 +567,18 @@ currBoard:
 	
 # Registers:
 #	a0: the pre-adjusted index value
+#	a1: the base address of the newIndArr
 #	t7: the base address of the card display array (cardDisArr)
 #	s1: the address of the cardDisArr value at index position
 
 flippedCardPrint:
-	la	$t7, cardDisArr
-	
-	add	$s1, $t7, $a0 # get to the actual index position
-	
+	add	$s1, $a0, $a1 # to get address of index in newIndArr
+	lw 	$s1, ($s1) # get the index value
+	mul	$s1, $s1, 4 # adjust it
+		
 	# display the value at that position
 	li	$v0, 4
-	la	$a0, 0($s1)
+	la	$a0, cardDisArr($s1)
 	syscall
 	
 	la	$a0, space
