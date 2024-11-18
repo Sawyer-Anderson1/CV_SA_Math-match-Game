@@ -32,7 +32,7 @@ locationCheck: # checks and goes to location in the array
 	
 	Row0: 
 		#la	$t0, cardValArr
-		addi	$t0, $a2, 0
+		addi	$t0, $s3, 0
 		
 		mul	$t1, $a1, 4
 		add	$t0, $t1, $t0
@@ -45,7 +45,7 @@ locationCheck: # checks and goes to location in the array
 		
 	Row1: 
 		#la	$t0, cardValArr+16
-		addi	$t0, $a2, 16
+		addi	$t0, $s3, 16
 		
 		mul	$t1, $a1, 4
 		add	$t0, $t1, $t0
@@ -58,7 +58,7 @@ locationCheck: # checks and goes to location in the array
 		
 	Row2: 
 		#la	$t0, cardValArr+32
-		addi	$t0, $a2, 32
+		addi	$t0, $s3, 32
 		
 		mul	$t1, $a1, 4
 		add	$t0, $t1, $t0
@@ -71,7 +71,7 @@ locationCheck: # checks and goes to location in the array
 		
 	Row3:
 		#la	$t0, cardValArr+48
-		addi	$t0, $a2, 48
+		addi	$t0, $s3, 48
 		
 		mul	$t1, $a1, 4
 		add	$t0, $t1, $t0
