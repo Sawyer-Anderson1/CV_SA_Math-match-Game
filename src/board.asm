@@ -93,7 +93,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			
 			# if the column for card 1 doesn't match even though the row number does
 			# then check the row number for card 2
-			# sense it wouldn't have beeen check in the branch to c1_0
+			# since it wouldn't have been checkedd in the branch to c1_0
 			beq	$a2, 0, c2_0
 			j	Else0
 			
@@ -152,7 +152,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			
 			# if the column for card 1 doesn't match even though the row number does
 			# then check the row number for card 2
-			# sense it wouldn't have beeen check in the branch to c1_0
+			# since it wouldn't have been checkedd in the branch to c1_1
 			beq	$a2, 1, c2_1
 			j	Else1
 			
@@ -212,7 +212,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			
 			# if the column for card 1 doesn't match even though the row number does
 			# then check the row number for card 2
-			# sense it wouldn't have beeen check in the branch to c1_0
+			# since it wouldn't have been checkedd in the branch to c1_2
 			beq	$a2, 2, c2_2
 			j	Else2
 			
@@ -272,7 +272,7 @@ TempPrint: # showing the cards choosen, if they don't match
 			
 			# if the column for card 1 doesn't match even though the row number does
 			# then check the row number for card 2
-			# sense it wouldn't have beeen check in the branch to c1_0
+			# since it wouldn't have been checkedd in the branch to c1_3
 			beq	$a2, 3, c2_3
 			j	Else3
 			
