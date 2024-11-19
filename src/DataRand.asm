@@ -75,26 +75,6 @@ DataRand:
 
     		j shuffleLoop
 	
-Exit:
-	li $t0, 16            # Number of cards
-	la $t2, newIndArr
-	
-	printLoop:
-    		#beqz $t0, endPrint
-
-    		#lw $a0, 0($t2)
-    		#li $v0, 1          # Print integer
-    		#syscall
-    		
-    		#li $v0, 4
-    		#la $a0, newLine
-    		#syscall
-
-    		#addi $t2, $t2, 4   # Move to next position
-    		#subi $t0, $t0, 1
-    		#j printLoop
-
-	endPrint:
-    	
+Exit:	
     	move  $v0, $t1              # Move the base address of newIndArr to $v0 for syscall (if needed)
     	jr    $ra                   # Return from function
