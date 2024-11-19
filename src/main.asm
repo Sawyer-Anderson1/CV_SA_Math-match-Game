@@ -13,6 +13,8 @@
 
 prompt:		.asciiz "Enter a row index 0-3 and a column index 0-3: "
 gameFinished: 	.asciiz "You won!\n"
+sameCardErr:	.asciiz	"Error: Same card position, please enter again with different positions\n"
+boundsErr:	.asciiz	"Error: Out of bounds, please enter integers 0-3\n"
 firstCard:	.word 0, 0
 secondCard: 	.word 0, 0
 amount:		.word 8
@@ -51,8 +53,8 @@ Prompt: # reprompting for the input
 	
 	li	$v0, 5
 	syscall
-	move	$t0, $v0
-	sw	$t0, firstCard+4
+	move	$t1, $v0
+	sw	$t1, firstCard+4
 	
 	li	$v0, 4
 	la	$a0, prompt
@@ -60,13 +62,35 @@ Prompt: # reprompting for the input
 	
 	li	$v0, 5
 	syscall
-	move	$t0, $v0
-	sw	$t0, secondCard
+	move	$t2, $v0
+	sw	$t2, secondCard
 		
 	li	$v0, 5
 	syscall
-	move	$t0, $v0
-	sw	$t0, secondCard+4
+	move	$t3, $v0
+	sw	$t3, secondCard+4
+	
+	#Check if inputs are out of bounds
+	ble 	$t0, 3, Continue
+	ble	$t1, 3, Continue	
+	ble 	$t2, 3, Continue
+	ble	$t3, 3, Continue
+	
+	li	$v0, 4		# if so
+	la	$a0, boundsErr	# Print sameCardErr, inputted postions are the same, try again.
+    	syscall 
+	j 	Prompt
+	
+	#Check if same card, row and col
+	bne 	$t0, $t2, Continue	# Continue print if rows are not equal
+	bne	$t1, $t3, Continue	# Continue print if columns are not equal
+	
+	li	$v0, 4			# if so
+	la	$a0, sameCardErr	# Print sameCardErr, inputted postions are the same, try again.
+    	syscall 
+	j 	Prompt
+	
+	Continue:
 	
 cardCheck:	
 	# t0: the firstCard (the row index)
@@ -92,7 +116,7 @@ cardCheck:
 	
 	jal	locationCheck # jumping to the subroutine
 	move	$s1, $v0
-		
+	
 	#the if statement condition
 	bne	$s2, $s1, Else
 	
