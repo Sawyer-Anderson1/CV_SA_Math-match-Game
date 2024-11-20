@@ -25,9 +25,9 @@ CurrTime:
 	syscall
 	
 	# Load time into register
-	lw 	$s0, timer
+	lw 	$t0, timer
 	
-	sub $t3, $a0, $s0	# get current time in milliseconds
+	sub $t3, $a0, $t0	# get current time in milliseconds
 	
 	bge $t3, 60000, Minute		# If milliseconds > minute, calculate minutes
 	blt $t3, 60000, Seconds		# If not calculate seconds
