@@ -76,26 +76,27 @@ Prompt: # reprompting for the input
 	sw	$t3, secondCard+4
 	
 	#Check if inputs are out of bounds
-	ble 	$t0, 3, Continue
-	ble	$t1, 3, Continue	
-	ble 	$t2, 3, Continue
-	ble	$t3, 3, Continue
+	ble 	$t0, 3, Continue1
+	ble	$t1, 3, Continue1	
+	ble 	$t2, 3, Continue1
+	ble	$t3, 3, Continue1
 	
 	li	$v0, 4		# if so
 	la	$a0, boundsErr	# Print sameCardErr, inputted postions are the same, try again.
     	syscall 
 	j 	Prompt
 	
+	Continue1:
 	#Check if same card, row and col
-	bne 	$t0, $t2, Continue	# Continue print if rows are not equal
-	bne	$t1, $t3, Continue	# Continue print if columns are not equal
+	bne 	$t0, $t2, Continue2	# Continue print if rows are not equal
+	bne	$t1, $t3, Continue2	# Continue print if columns are not equal
 	
 	li	$v0, 4			# if so
 	la	$a0, sameCardErr	# Print sameCardErr, inputted postions are the same, try again.
     	syscall 
 	j 	Prompt
 	
-	Continue:
+	Continue2:
 	
 cardCheck:	
 	# t0: the firstCard (the row index)
