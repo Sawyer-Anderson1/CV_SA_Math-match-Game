@@ -3,7 +3,7 @@
 # Written by: Sawyer Anderson and Carlos Vazquez
 # Date Created: 11/7/2024
 # Description: The file that gets input (Prompt) and calls
-#        the locationCheck and boardUpdate files/subroutines
+#        the locationCheck timer, DataRand, and boardUpdate files/subroutines
 #-----------------------------------------------------------
 
 #-----------------------
@@ -25,12 +25,17 @@ timer:		.word 0
 #------------------
 
 .text
-.globl	main, Prompt
+.globl	main, Prompt, timer
 
 # Notable registers:
 #	s3: holds the returned address of the newIndArr from the randomizor
 main:
 	lw	$s0, amount
+	
+	# Record start time
+	li 	$v0, 30              # Syscall: get runtime 
+	syscall
+	sw	$a0, timer		# Store lo 32 bits of end time
 	
 	# call the randomizor
 	jal 	DataRand
@@ -135,7 +140,7 @@ cardCheck:
 		move	$a3, $t3
 		
 		jal 	MatchPrint
-		
+		jal	CurrTime
 		j 	Prompt
 	Else:
 		li	$a0, 0 # 0 for not matching
@@ -151,11 +156,14 @@ cardCheck:
 		move	$a3, $t3
 		
 		jal	TempPrint
+		jal	CurrTime
 		j	Prompt
 Exit: 
 	li	$v0, 4
 	la	$a0, gameFinished
 	syscall
+	
+	jal	CurrTime
 	
 	li	$v0, 10
 	syscall
