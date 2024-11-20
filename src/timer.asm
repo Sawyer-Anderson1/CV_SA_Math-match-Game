@@ -1,101 +1,72 @@
 #---------------------------------------------------
 # Program file: timer.asm
-# Written by: Sawyer Anderson
+# Written by: Carlos Vazquez & Sawyer Anderson
 # Date created: 10/24/2024
 #---------------------------------------------------
-
-#--------------------------------------------------
-# Registers:
-# 	$t0: register to load in/store time
-#	$t1: holds minute value
-#	$t2: holds sec value
-#	$t3: for the value that holds 60s
-#	$t4: the register that holds tnes digit 
-#		for both minutes and seconds to edit
-#		the output
-#	$t7: the ones digit
-#	$t5: hold 10 for the calculation of the double digits
-#	$t6: for loading time format
-#--------------------------------------------------
-
 #-------------
 # Data Segment
 #-------------
-		.data
-time:		.word 0
-timeFormat:	.asciiz "00:00" # will just edit the string
-tens:		
+.data
+message_end:   		.asciiz "Elapsed Time: \n"
+message_minutes: 	.asciiz "Minutes: "
+message_seconds: 	.asciiz ", Seconds: "
+nLine:			.asciiz	"\n"
+currTime:		.word 0
+	
 #-------------
 # Text Segment
 #-------------
 .text
+.globl CurrTime
 
-.globl Timer
-.globl TimerPause
-Timer: 
-	move	$t0, $a0 # taking a saved timer as the starting point for the timer
+CurrTime:
+	# Record end time
+	li 	$v0, 30              	# Syscall: get runtime (milliseconds)
+	syscall
 	
-	# waiting 1 second (loop)
-	li	$v0, 32 # sleep syscall
-	li	$a0, 1000 # sleep for one second
-	syscall 
-
-	addi	$t0, $zero, 1 # adding a second to time
-	sw	$t0, time
-
-	# load in the format
-	lw	$t6, timeFormat
+	# Load time into register
+	lw 	$s0, timer
 	
-	# jump to the infinite loop timer
-	j	Loop
-
-	Loop:
-		# waiting 1 second (loop)
-		li	$v0, 32 # sleep syscall
-		li	$a0, 1000 # sleep for one second
-		syscall 
-
-		addi	$t0, $t0, 1 # adding a second to time
-		sw	$t0, time
+	sub $t3, $a0, $s0	# get current time in milliseconds
 	
-		addi	$t3, $zero, 60 # t2 holds the value 60, for calculating time
-		div	$t0, $t3 # calculating the minutes and seconds
+	bge $t3, 60000, Minute		# If milliseconds > minute, calculate minutes
+	blt $t3, 60000, Seconds		# If not calculate seconds
 	
-		mfhi	$t2 # get the seconds (remainder)
-		mflo	$t1 # get the minutes (result)
+		Minute:
+			# Calculate minutes, seconds, and remaining milliseconds
+			li 	$t4, 60000		# $t4 = 60,000 ms (1 minute)
+			div 	$t5, $t3, $t4       	# $t5 = minutes (integer division)
+			mflo	$t6                	# $t6 = remaining milliseconds after minutes
+			div 	$t7, $t6, 1000      	# $t7 = seconds (integer division)
+			j 	TimePrint
+		Seconds:
+			div 	$t7, $t3, 1000      	# $t7 = seconds (integer division)
 	
-		# edit the timeFormat
-		addi	$t5, $zero, 10 # get 10
-		div	$t1, $t5 # if it (minutes) is a tens digit then Lo will return > 0
+	TimePrint:
+	# Print "Elapsed Time: \n"
+	li 	$v0, 4               	# Syscall: print string
+	la 	$a0, message_end
+	syscall
 	
-		mflo	$t4 # get the tens digit
-		mfhi	$t7 # get the ones digit
+	# Print minutes
+	li 	$v0, 4               	# Syscall: print string
+	la 	$a0, message_minutes
+	syscall
+	li 	$v0, 1               	# Syscall: print integer
+	move 	$a0, $t5           	# Load minutes
+	syscall
 	
-		li	$v0, 1
-		move	$a0, $t4
-		syscall
-		li	$v0, 1
-		move	$a0, $t7
-		syscall
+	# Print seconds
+	li 	$v0, 4               	# Syscall: print string
+	la 	$a0, message_seconds
+	syscall
+	li 	$v0, 1               	# Syscall: print integer
+	move 	$a0, $t7           	# Load seconds
+	syscall
 	
-		li	$v0, 11
-		la	$a0, 8($t6)
-		syscall
+	# Print new line
+	li 	$v0, 4               	# Syscall: print string
+	la 	$a0, nLine
+	syscall
 	
-		div	$t2, $t5 # if it (seconds) is a tens digit then Lo will return > 0
-	
-		mflo	$t4 # get it the tens digit
-		mfhi	$t7 # get the ones digit
-	
-		li	$v0, 1
-		move	$a0, $t4
-		syscall
-		li	$v0, 1
-		move	$a0, $t7
-		syscall
-	
-		j	Loop
-
-TimerPause:
-	add	$v0, $zero, $t0
 	jr 	$ra
