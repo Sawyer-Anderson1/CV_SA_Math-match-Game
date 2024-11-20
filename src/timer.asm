@@ -12,6 +12,7 @@ message_minutes: 	.asciiz "Minutes: "
 message_seconds: 	.asciiz ", Seconds: "
 nLine:			.asciiz	"\n"
 currTime:		.word 0
+second:			.word 0
 	
 #-------------
 # Text Segment
@@ -36,7 +37,7 @@ CurrTime:
 			# Calculate minutes, seconds, and remaining milliseconds
 			li 	$t4, 60000		# $t4 = 60,000 ms (1 minute)
 			div 	$t5, $t3, $t4       	# $t5 = minutes (integer division)
-			mflo	$t6                	# $t6 = remaining milliseconds after minutes
+			rem 	$t6, $t3, $t4
 			div 	$t7, $t6, 1000      	# $t7 = seconds (integer division)
 			j 	TimePrint
 		Seconds:
